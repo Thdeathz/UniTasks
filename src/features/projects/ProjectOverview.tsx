@@ -1,6 +1,6 @@
-import { DeleteOutlined, UserOutlined } from '@ant-design/icons'
-import { Avatar, Progress } from 'antd'
 import React from 'react'
+import { UserOutlined } from '@ant-design/icons'
+import { Avatar, Progress } from 'antd'
 import { useParams } from 'react-router-dom'
 import ProjectLayout from '~/components/Layouts/ProjectLayout'
 import useBoardStore from '~/stores/BoardStore'
@@ -11,6 +11,11 @@ type EachColumnPropsType = {
   tasks: TaskType[]
 }
 
+type MemberInfoPropsType = {
+  name: string
+  email: string
+}
+
 const columnTitle: {
   [key in StatusType]: string
 } = {
@@ -18,6 +23,19 @@ const columnTitle: {
   inprogress: 'IN PROGRESS',
   reviewing: 'REVIEWING',
   completed: 'COMPLETED'
+}
+
+const MemberInfo = ({ name, email }: MemberInfoPropsType) => {
+  return (
+    <div className="flex justify-center items-center gap-2">
+      <Avatar className="flex justify-center items-center" size={36} icon={<UserOutlined />} />
+
+      <div className="flex flex-col justify-start items-start">
+        <p className="font-semibold text-lg">{name}</p>
+        <p className="text-noneSelected">{email}</p>
+      </div>
+    </div>
+  )
 }
 
 const EachColumn = ({ id, tasks }: EachColumnPropsType) => {
@@ -61,27 +79,18 @@ const ProjectOverview = () => {
         <div className="basis-1/2 h-full bg-bgDefault rounded-md py-2 px-3 overflow-y-auto hidden-scroll-bar shadow-md">
           <p className="text-2xl font-semibold">Member</p>
 
-          <div className="border border-disabled rounded-md px-2 py-1">
+          <div className="border border-disabled rounded-md mt-2 px-2 py-1">
             <input
               className="outline-none border-none w-full"
               placeholder="Find member by email..."
             />
           </div>
-          <div className="flex flex-col justify-start items-start gap-1 mt-2">
-            <div className="flex justify-between items-center w-full">
-              <div className="flex justify-center items-center gap-2">
-                <Avatar
-                  className="flex justify-center items-center"
-                  size={36}
-                  icon={<UserOutlined />}
-                />
-
-                <div className="flex flex-col justify-start items-start">
-                  <p className="font-semibold text-lg">Bui Dung (you)</p>
-                  <p className="text-noneSelected">buidung@gmail.com</p>
-                </div>
-              </div>
-            </div>
+          <div className="flex flex-col justify-start items-start gap-2 mt-2">
+            <MemberInfo name="Bui Dung (you)" email="buidung@gmail.com" />
+            <MemberInfo name="Tran Huy" email="tranhuy@gmail.com" />
+            <MemberInfo name="Tien Loc" email="tienloc@gmail.com" />
+            <MemberInfo name="Duc Luong" email="ducluong@gmail.com" />
+            <MemberInfo name="Duc Nghia" email="ducnghia@gmail.com" />
           </div>
         </div>
         <div className="basis-1/2 h-full flex flex-col justify-center items-center gap-4">

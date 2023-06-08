@@ -1,8 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
-import { getFirestore } from 'firebase/firestore'
-import { getStorage } from 'firebase/storage'
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
+import { connectStorageEmulator, getStorage } from 'firebase/storage'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,3 +24,7 @@ export const analytics = getAnalytics(app)
 
 export const db = getFirestore(app)
 export const storage = getStorage(app)
+
+// development environment only
+// connectFirestoreEmulator(db, 'localhost', 8080)
+// connectStorageEmulator(storage, 'localhost', 9199)

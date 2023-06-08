@@ -71,7 +71,7 @@ const EachColumn = ({ id, tasks, index, showHeader }: PropsType) => {
                   <Draggable key={task.id} draggableId={task.id} index={index}>
                     {(provided, snapshot) => (
                       <div
-                        className={`w-[18vw] mb-4`}
+                        className={`${snapshot.isDragging ? 'w-[19vw]' : 'w-full'} mb-4`}
                         key={`each-task-${index}`}
                         ref={provided.innerRef}
                         {...provided.draggableProps}

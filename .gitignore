@@ -26,3 +26,9 @@ dist-ssr
 
 # environment
 .env
+
+# firebase
+firestore.*
+*.rules
+*.json
+.firebaserc
