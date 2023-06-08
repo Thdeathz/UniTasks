@@ -10,6 +10,8 @@ import { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 import { StrictModeDroppable as Droppable } from '~/helpers/StrictModeDroppable'
 import { showDeleteConfirm } from '~/components/ComfirmModal'
+import { notification } from 'antd'
+import { toast } from 'react-toastify'
 
 const Tasks = () => {
   const { projectId } = useParams()
@@ -45,6 +47,9 @@ const Tasks = () => {
 
       setBoardState({ ...board, columns: newCols })
       deleteTaskInDB(deleteTask)
+      toast.warning('You just delete a task !', {
+        toastId: 99
+      })
       return
     }
 
@@ -92,10 +97,8 @@ const Tasks = () => {
     }
   }
 
-  if (!projectId || !projects) return <></>
-
   return (
-    <ProjectLayout projectName={projects.get(projectId)?.name as string}>
+    <ProjectLayout projectName={projects.get(projectId as string)?.name as string}>
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <div className="flex justify-between items-start mt-2 h-full px-3">
           {Array.from(board.columns.entries()).map(([id, column], index) => (
@@ -145,7 +148,7 @@ const Tasks = () => {
         </Droppable>
       </DragDropContext>
 
-      <CreateTask projectId={projectId} />
+      <CreateTask projectId={projectId as string} />
     </ProjectLayout>
   )
 }

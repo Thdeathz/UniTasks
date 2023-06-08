@@ -13,7 +13,7 @@ const NewTag = ({ tagsList, setTagsList, setIsAddNewTag }: PropsType) => {
   const [tagValue, setTagValue] = useState<TagType>({ name: '', color: token.colorPrimary })
 
   const handleAddNewTag = () => {
-    if (tagValue) {
+    if (tagValue && tagValue.name) {
       const { name, color } = tagValue
       setTagsList([...tagsList, { name, color }])
       setIsAddNewTag(false)

@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons'
 import { Avatar, Tooltip } from 'antd'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
 
 type NavItemProps = {
   icon: React.ReactNode
@@ -50,7 +51,10 @@ const NavItem = ({ icon, text, path }: NavItemProps) => {
       </button>
       <>
         {isActive && (
-          <div className="w-4/5 h-[2px] bg-textHover absolute bottom-0 right-[10%]"></div>
+          <motion.div
+            layoutId="underline"
+            className="w-4/5 h-[2px] bg-textHover absolute bottom-0 right-[10%]"
+          ></motion.div>
         )}
       </>
     </div>

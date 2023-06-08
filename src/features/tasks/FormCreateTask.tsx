@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Button, DatePicker, Form, Input, Select } from 'antd'
-import { LoadingOutlined, TagOutlined } from '@ant-design/icons'
+import { TagOutlined } from '@ant-design/icons'
 import SubTask from '~/components/SubTask'
 import NewTag from '~/components/NewTag'
 import Tag from '~/components/Tag'
-import { addDocument } from '~/firebase/services'
 import { v4 } from 'uuid'
 import useBoardStore from '~/stores/BoardStore'
+import { toast } from 'react-toastify'
 
 type PropsType = {
   projectId: string
@@ -16,7 +16,7 @@ type PropsType = {
 const OPTIONS = ['Bui Dung', 'Tran Huy', 'Duc Luong', 'Tien Loc', 'Duc Nghia']
 
 const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
-  const [board, addNewTaskInDB] = useBoardStore(state => [state.board, state.addNewTaskInDB])
+  const [addNewTaskInDB] = useBoardStore(state => [state.addNewTaskInDB])
 
   const [form] = Form.useForm()
   const [tagsList, setTagsList] = useState<TagType[]>([])
@@ -57,6 +57,9 @@ const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
       setTagsList([])
       form.resetFields()
       setIsOpen(false)
+      toast.success('Create new task successfully', {
+        toastId: 'create task'
+      })
     } catch (error) {
       console.error(error)
     }

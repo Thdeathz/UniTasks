@@ -7,8 +7,6 @@ import useBoardStore from '~/stores/BoardStore'
 const MyCalendar = () => {
   const [board, isSideBarOpen] = useBoardStore(state => [state.board, state.isSideBarOpen])
 
-  if (!board) return <></>
-
   const columns = Array.from(board.columns.entries()).map(([id, column]) =>
     column.tasks
       .filter(each => each.assignedUser.includes('Bui Dung'))
@@ -20,7 +18,7 @@ const MyCalendar = () => {
 
   return (
     <DefaultLayout>
-      {columns && (
+      {columns.length !== 0 && (
         <FullCalendar
           viewClassNames={[`${isSideBarOpen ? 'h-[74%]' : 'h-[65%]'} p-3`]}
           plugins={[dayGridPlugin]}

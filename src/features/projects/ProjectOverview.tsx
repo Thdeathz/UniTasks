@@ -55,10 +55,8 @@ const ProjectOverview = () => {
   const [board] = useBoardStore(state => [state.board])
   const [projects] = useProjectStore(state => [state.projects])
 
-  if (!projectId || !projects) return <></>
-
   return (
-    <ProjectLayout projectName={projects.get(projectId)?.name as string}>
+    <ProjectLayout projectName={projects.get(projectId as string)?.name as string}>
       <div className="bg-neutral-3 h-full p-3 flex justify-center items-center gap-4">
         <div className="basis-1/2 h-full bg-bgDefault rounded-md py-2 px-3 overflow-y-auto hidden-scroll-bar shadow-md">
           <p className="text-2xl font-semibold">Member</p>
@@ -89,8 +87,8 @@ const ProjectOverview = () => {
         <div className="basis-1/2 h-full flex flex-col justify-center items-center gap-4">
           <div className="w-full rounded-md bg-bgDefault py-2 px-3 shadow-md flex flex-col gap-1 justify-start items-start">
             <p className="text-2xl font-semibold">About project</p>
-            <p className="text-xl font-medium">{projects.get(projectId)?.name}</p>
-            <p className="max-w-[40vw]">{projects.get(projectId)?.description}</p>
+            <p className="text-xl font-medium">{projects.get(projectId as string)?.name}</p>
+            <p className="max-w-[40vw]">{projects.get(projectId as string)?.description}</p>
           </div>
           <div className="w-full grow rounded-md bg-bgDefault py-2 px-3 shadow-md">
             <p className="text-2xl font-semibold mb-4">About project</p>

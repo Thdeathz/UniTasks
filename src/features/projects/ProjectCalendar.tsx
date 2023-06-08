@@ -11,8 +11,6 @@ const ProjectCalendar = () => {
   const [projects] = useProjectStore(state => [state.projects])
   const [board] = useBoardStore(state => [state.board])
 
-  if (!board || !projects) return <></>
-
   const columns = Array.from(board.columns.entries()).map(([id, column]) =>
     column.tasks
       .filter(each => each.projectId === projectId)
@@ -22,17 +20,20 @@ const ProjectCalendar = () => {
       }))
   )
 
-  if (!projectId || !projects) return <></>
-
   return (
-    <ProjectLayout projectName={projects.get(projectId)?.name as string}>
-      <FullCalendar
-        viewClassNames={['h-[68%] px-3']}
-        plugins={[dayGridPlugin]}
-        initialView="dayGridMonth"
-        headerToolbar={false}
-        events={[...columns[0], ...columns[1], ...columns[2]]}
-      />
+    <ProjectLayout projectName={projects.get(projectId as string)?.name as string}>
+      {columns.length !== 0 && (
+        <FullCalendar
+          viewClassNames={['h-[68%] px-3']}
+          plugins={[dayGridPlugin]}
+          initialView="dayGridMonth"
+          editable={true}
+          selectable={true}
+          selectMirror={true}
+          headerToolbar={false}
+          events={[...columns[0], ...columns[1], ...columns[2]]}
+        />
+      )}
     </ProjectLayout>
   )
 }

@@ -2,9 +2,7 @@ import React, { useState } from 'react'
 import { Avatar, Modal, Tooltip } from 'antd'
 import {
   CalendarOutlined,
-  DeleteOutlined,
   EditOutlined,
-  ExclamationCircleOutlined,
   MessageOutlined,
   PlusCircleOutlined,
   PlusOutlined,
@@ -14,8 +12,6 @@ import {
 } from '@ant-design/icons'
 import Tag from '~/components/Tag'
 import SubTask from '~/components/SubTask'
-import useBoardStore from '~/stores/BoardStore'
-import { showDeleteConfirm } from '~/components/ComfirmModal'
 import useProjectStore from '~/stores/ProjectStore'
 
 type PropsType = {
@@ -44,12 +40,6 @@ const UserItem = ({ size, name }: UserItemPropsType) => {
 
 const TaskItem = ({ title, task, showHeader }: PropsType) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [board, setBoardState, deleteTaskInDB] = useBoardStore(state => [
-    state.board,
-    state.setBoardState,
-    state.deleteTaskInDB
-  ])
-
   const [projects] = useProjectStore(state => [state.projects])
 
   return (

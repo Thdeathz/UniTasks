@@ -1,7 +1,5 @@
-import { Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route, Outlet } from 'react-router-dom'
 import Tasks from './features/tasks/Tasks'
-import { getFirestore } from 'firebase/firestore'
-import { FirestoreProvider, useFirebaseApp } from 'reactfire'
 import CreateProject from './features/projects/CreateProject'
 import MyTasks from './features/tasks/MyTasks'
 import Prefectch from './features/auth/Prefectch'
@@ -10,8 +8,6 @@ import ProjectCalendar from './features/projects/ProjectCalendar'
 import MyCalendar from './features/auth/MyCalendar'
 
 function App() {
-  const firestoreInstance = getFirestore(useFirebaseApp())
-
   return (
     <Routes>
       <Route path="/" element={<Outlet />}>
@@ -22,14 +18,7 @@ function App() {
 
           <Route path="project">
             <Route path=":projectId">
-              <Route
-                path="tasks"
-                element={
-                  <FirestoreProvider sdk={firestoreInstance}>
-                    <Tasks />
-                  </FirestoreProvider>
-                }
-              />
+              <Route path="tasks" element={<Tasks />} />
 
               <Route path="overview" element={<ProjectOverview />} />
 
