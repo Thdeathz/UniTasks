@@ -12,12 +12,13 @@ const CreateTask = ({ projectId }: PropsType) => {
 
   return (
     <>
-      <FloatButton
-        type="primary"
-        style={{ right: 24 }}
-        icon={<PlusOutlined className="flex justify-center items-center" />}
+      <button
+        className="bg-primary-3 text-bgDefault hover:opacity-90 transition-all hover:text-textHover absolute bottom-12 right-6 z-50 h-[40px] px-3 flex justify-center items-center gap-1 rounded-full cursor-pointer shadow-md"
         onClick={() => setIsOpen(true)}
-      />
+      >
+        <PlusOutlined className="flex justify-center items-center" />
+        <span className="font-medium">New task</span>
+      </button>
 
       <Modal
         title={<p className="bg-todo text-sm font-semibold px-2 py-1 rounded-md w-max">TO DO</p>}

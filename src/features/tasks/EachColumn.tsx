@@ -4,7 +4,6 @@ import { StrictModeDroppable as Droppable } from '~/helpers/StrictModeDroppable'
 import { Draggable } from 'react-beautiful-dnd'
 import TaskItem from './TaskItem'
 import { Empty } from 'antd'
-import useProjectStore from '~/stores/ProjectStore'
 
 type PropsType = {
   id: StatusType
@@ -23,12 +22,20 @@ const columnTitle: {
 }
 
 const EachColumn = ({ id, tasks, index, showHeader }: PropsType) => {
+  let backgroundColor = ''
+  if (id === 'todo') backgroundColor = 'bg-todo'
+  if (id === 'inprogress') backgroundColor = 'bg-inprogress'
+  if (id === 'reviewing') backgroundColor = 'bg-reviewing'
+  if (id === 'completed') backgroundColor = 'bg-completed'
+
   const title = (
-    <p className={`bg-${id} text-sm font-semibold px-2 py-1 rounded-md w-max`}>{columnTitle[id]}</p>
+    <p className={`${backgroundColor} text-sm font-semibold px-2 py-1 rounded-md w-max`}>
+      {columnTitle[id]}
+    </p>
   )
 
   return (
-    <div className="basis-[24%] flex flex-col justify-start items-start max-h-full relative">
+    <div className="w-[24%] flex flex-col justify-start items-start max-h-full relative">
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-center items-center gap-2">
           {title}
@@ -62,9 +69,9 @@ const EachColumn = ({ id, tasks, index, showHeader }: PropsType) => {
               <>
                 {tasks.map((task, index) => (
                   <Draggable key={task.id} draggableId={task.id} index={index}>
-                    {provided => (
+                    {(provided, snapshot) => (
                       <div
-                        className="w-[18vw] mb-4"
+                        className={`w-[18vw] mb-4`}
                         key={`each-task-${index}`}
                         ref={provided.innerRef}
                         {...provided.draggableProps}

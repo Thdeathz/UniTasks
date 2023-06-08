@@ -1,25 +1,16 @@
-import React, { useEffect } from 'react'
-import ProjectLayout from '~/components/Layouts/ProjectLayout'
+import React from 'react'
 import { DragDropContext, OnDragEndResponder } from 'react-beautiful-dnd'
 import useBoardStore from '~/stores/BoardStore'
 import EachColumn from './EachColumn'
-import CreateTask from './CreateTask'
 import DefaultLayout from '~/components/Layouts/DefaultLayout'
 
 const MyTasks = () => {
-  const [board, getBoard, setBoardState, updateTaskStatusInDB, updatePriorityInDB] = useBoardStore(
-    state => [
-      state.board,
-      state.getBoard,
-      state.setBoardState,
-      state.updateTaskStatusInDB,
-      state.updatePriorityInDB
-    ]
-  )
-
-  useEffect(() => {
-    getBoard()
-  }, [getBoard])
+  const [board, setBoardState, updateTaskStatusInDB, updatePriorityInDB] = useBoardStore(state => [
+    state.board,
+    state.setBoardState,
+    state.updateTaskStatusInDB,
+    state.updatePriorityInDB
+  ])
 
   const handleOnDragEnd: OnDragEndResponder = async result => {
     const { source, destination } = result

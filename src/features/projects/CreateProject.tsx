@@ -11,7 +11,7 @@ const CreateProject = () => {
       <Form className="px-8 py-4 w-2/3" form={form} autoComplete="off" layout="vertical">
         <Form.Item
           label={<p className="text-2xl font-semibold">Project name:</p>}
-          name="name"
+          name="projectName"
           rules={[{ required: true, message: 'Project name is required.' }]}
         >
           <Input placeholder="Enter your project name..." />

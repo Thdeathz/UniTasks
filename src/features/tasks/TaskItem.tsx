@@ -3,6 +3,7 @@ import { Avatar, Modal, Tooltip } from 'antd'
 import {
   CalendarOutlined,
   DeleteOutlined,
+  EditOutlined,
   ExclamationCircleOutlined,
   MessageOutlined,
   PlusCircleOutlined,
@@ -51,23 +52,6 @@ const TaskItem = ({ title, task, showHeader }: PropsType) => {
 
   const [projects] = useProjectStore(state => [state.projects])
 
-  const handleDelteTask = () => {
-    const currentCol = board.columns.get(task.status)
-
-    if (!currentCol) return
-
-    const newTasks = currentCol.tasks.filter(each => each.id !== task.id)
-
-    const newCols = new Map(board.columns)
-    newCols.set(currentCol.id, {
-      id: currentCol.id,
-      tasks: newTasks
-    })
-
-    setBoardState({ ...board, columns: newCols })
-    deleteTaskInDB(task)
-  }
-
   return (
     <>
       <div
@@ -94,17 +78,6 @@ const TaskItem = ({ title, task, showHeader }: PropsType) => {
                 )}
               </>
             </div>
-
-            <DeleteOutlined
-              className="z-50 flex justify-center items-center text-danger hover:scale-125 transition-transform"
-              onClick={() =>
-                showDeleteConfirm({
-                  title: 'Are you sure you want to delete this task?',
-                  icon: <ExclamationCircleOutlined />,
-                  onOk: handleDelteTask
-                })
-              }
-            />
           </div>
 
           <p className="font-semibold text-lg">{task.title}</p>
@@ -113,12 +86,18 @@ const TaskItem = ({ title, task, showHeader }: PropsType) => {
             {task.assignedUser?.slice(0, 2)?.map((user, index) => (
               <UserItem key={`assigned-user-${index}`} size="small" name={user as string} />
             ))}
+            {task.assignedUser.length > 2 && (
+              <span className="border-dashed border border-disabled rounded-full text-sm font-medium text-noneSelected w-[24px] h-[24px] flex justify-center items-center">
+                <PlusOutlined className="text-xs flex items-center justify-center" />
+                {task.assignedUser.length - 2}
+              </span>
+            )}
           </div>
 
           <div className="flex justify-between items-center w-full">
             <p className="flex justify-center items-center gap-1 text-sm text-noneSelected font-medium">
               <MessageOutlined />
-              <span>5</span>
+              <span>2</span>
             </p>
 
             {task?.dueDate && (
@@ -176,15 +155,21 @@ const TaskItem = ({ title, task, showHeader }: PropsType) => {
       >
         <div className="flex justify-between items-start h-[75vh] overflow-y-auto custom-scroll-bar">
           <div className="basis-2/3 flex flex-col justify-start items-start gap-1 pr-2">
-            <div className="flex justify-start items-center gap-2 w-full">
-              {task.tags?.map((tag, index) => (
-                <Tag key={`tag-${index}`} type="custom" text={tag.name} color={tag.color} />
-              ))}
+            <div className="flex justify-between items-center w-full">
+              <div className="flex justify-start items-center gap-2">
+                {task.tags?.map((tag, index) => (
+                  <Tag key={`tag-${index}`} type="custom" text={tag.name} color={tag.color} />
+                ))}
 
-              <Tooltip placement="bottom" title="New tag">
-                <button className="text-sm font-medium flex justify-center items-center gap-1 text-noneSelected border p-1 rounded-md border-disabled border-dashed hover:text-textHover hover:border-textHover transition-colors">
-                  <TagOutlined />
-                </button>
+                <Tooltip placement="bottom" title="New tag">
+                  <button className="text-sm font-medium flex justify-center items-center gap-1 text-noneSelected border p-1 rounded-md border-disabled border-dashed hover:text-textHover hover:border-textHover transition-colors">
+                    <TagOutlined />
+                  </button>
+                </Tooltip>
+              </div>
+
+              <Tooltip placement="bottom" title="Edit task">
+                <EditOutlined className="cursor-pointer hover:text-textHover transition-colors text-lg text-noneSelected" />
               </Tooltip>
             </div>
 
@@ -215,7 +200,7 @@ const TaskItem = ({ title, task, showHeader }: PropsType) => {
             <div className="w-full">
               <p className="text-lg font-semibold mb-1">To do:</p>
 
-              <SubTask />
+              <SubTask subTasks={task.subTasks} />
             </div>
           </div>
 

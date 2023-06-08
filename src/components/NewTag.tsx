@@ -27,6 +27,7 @@ const NewTag = ({ tagsList, setTagsList, setIsAddNewTag }: PropsType) => {
         onChange={(value, hex) => setTagValue({ ...tagValue, color: hex })}
       />
       <input
+        maxLength={16}
         className="outline-none border-none font-normal w-[6vw] px-1 text-black"
         placeholder="Tag name..."
         onChange={e => setTagValue({ ...tagValue, name: e.target.value })}

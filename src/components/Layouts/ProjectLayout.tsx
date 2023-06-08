@@ -1,7 +1,7 @@
 import React from 'react'
 import DefaultLayout from './DefaultLayout'
 import { Avatar, Breadcrumb, Button } from 'antd'
-import { ShareAltOutlined } from '@ant-design/icons'
+import { EditOutlined, ShareAltOutlined } from '@ant-design/icons'
 import { useLocation } from 'react-router-dom'
 
 type PropsType = {
@@ -53,12 +53,21 @@ const ProjectLayout = ({ children, projectName }: PropsType) => {
                   <Avatar style={{ backgroundColor: '#f56a00' }}>DL</Avatar>
                 </Avatar.Group>
 
-                <Button
-                  className="flex justify-center items-center text-textHover"
-                  icon={<ShareAltOutlined />}
-                >
-                  Share
-                </Button>
+                <div className="flex justify-center items-center gap-2">
+                  <Button
+                    className="flex justify-center items-center text-textHover"
+                    icon={<EditOutlined />}
+                  >
+                    Edit
+                  </Button>
+
+                  <Button
+                    className="flex justify-center items-center text-textHover"
+                    icon={<ShareAltOutlined />}
+                  >
+                    Share
+                  </Button>
+                </div>
               </div>
             </>
           )}

@@ -35,7 +35,8 @@ const SideMenuItem = ({ icon, activedIcon, text, isOpen, path }: SideMenuItemPro
 
   const isActived =
     useLocation().pathname.slice(1) === path.slice(1) ||
-    (useLocation().pathname === '/' && path === '/')
+    (useLocation().pathname === '/' && path === '/') ||
+    (useLocation().pathname.slice(1) === 'calendar' && path === '/')
 
   return (
     <Tooltip placement="right" title={!isOpen && text}>
@@ -88,7 +89,7 @@ const SideBar = () => {
     <div
       className={`${
         isSideBarOpen ? 'w-52' : 'w-min'
-      } flex flex-col justify-between items-start border-r-2 border-borderLine h-full duration-200`}
+      } flex flex-col justify-between items-start border-r-2 border-borderLine h-full`}
     >
       <div
         className={`${isSideBarOpen && 'px-2'} flex flex-col justify-start items-start gap-2 py-4`}

@@ -20,6 +20,7 @@ const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
 
   const [form] = Form.useForm()
   const [tagsList, setTagsList] = useState<TagType[]>([])
+  const [subTasksList, setSubTasksList] = useState<SubTaskType[]>([])
   const [isAddNewTag, setIsAddNewTag] = useState<boolean>(false)
 
   const handleCancel = () => {
@@ -113,7 +114,7 @@ const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
         name="title"
         rules={[{ required: true, message: 'Task title is required.' }]}
       >
-        <Input placeholder="Enter task title..." />
+        <Input maxLength={128} placeholder="Enter task title..." />
       </Form.Item>
 
       <Form.Item
@@ -150,7 +151,7 @@ const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
       </Form.Item>
 
       <Form.Item label={<p className="text-lg font-semibold">To do:</p>} name="todo">
-        <SubTask />
+        <SubTask subTasks={subTasksList} setSubTasksList={setSubTasksList} />
       </Form.Item>
 
       <div className=" flex justify-end items-center mb-2 gap-2">

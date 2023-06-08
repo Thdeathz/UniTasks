@@ -24,7 +24,7 @@ type UserType = {
 
 type SubTaskType = {
   id?: string
-  title: string
+  value: string
   status: boolean
 }
 

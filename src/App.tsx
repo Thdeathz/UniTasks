@@ -7,6 +7,7 @@ import MyTasks from './features/tasks/MyTasks'
 import Prefectch from './features/auth/Prefectch'
 import ProjectOverview from './features/projects/ProjectOverview'
 import ProjectCalendar from './features/projects/ProjectCalendar'
+import MyCalendar from './features/auth/MyCalendar'
 
 function App() {
   const firestoreInstance = getFirestore(useFirebaseApp())
@@ -16,6 +17,8 @@ function App() {
       <Route path="/" element={<Outlet />}>
         <Route element={<Prefectch />}>
           <Route index element={<MyTasks />} />
+
+          <Route path="calendar" element={<MyCalendar />} />
 
           <Route path="project">
             <Route path=":projectId">

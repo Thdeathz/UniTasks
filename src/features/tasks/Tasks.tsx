@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import ProjectLayout from '~/components/Layouts/ProjectLayout'
 import { DragDropContext, OnDragEndResponder } from 'react-beautiful-dnd'
 import useBoardStore from '~/stores/BoardStore'
@@ -6,22 +6,47 @@ import EachColumn from './EachColumn'
 import CreateTask from './CreateTask'
 import { useParams } from 'react-router-dom'
 import useProjectStore from '~/stores/ProjectStore'
+import { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+import { motion } from 'framer-motion'
+import { StrictModeDroppable as Droppable } from '~/helpers/StrictModeDroppable'
+import { showDeleteConfirm } from '~/components/ComfirmModal'
 
 const Tasks = () => {
   const { projectId } = useParams()
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
-  const [board, setBoardState, updateTaskStatusInDB, updatePriorityInDB] = useBoardStore(state => [
-    state.board,
-    state.setBoardState,
-    state.updateTaskStatusInDB,
-    state.updatePriorityInDB
-  ])
+  const [board, setBoardState, updateTaskStatusInDB, updatePriorityInDB, deleteTaskInDB] =
+    useBoardStore(state => [
+      state.board,
+      state.setBoardState,
+      state.updateTaskStatusInDB,
+      state.updatePriorityInDB,
+      state.deleteTaskInDB
+    ])
   const [projects] = useProjectStore(state => [state.projects])
 
   const handleOnDragEnd: OnDragEndResponder = async result => {
     const { source, destination } = result
 
     if (!destination) return
+
+    if (destination.droppableId === 'delete') {
+      const startCol = board.columns.get(source.droppableId as StatusType)
+      if (!startCol) return
+
+      const newTasks = [...startCol.tasks]
+      const [deleteTask] = newTasks.splice(source.index, 1)
+
+      const newCols = new Map(board.columns)
+      newCols.set(startCol.id, {
+        id: startCol.id,
+        tasks: newTasks
+      })
+
+      setBoardState({ ...board, columns: newCols })
+      deleteTaskInDB(deleteTask)
+      return
+    }
 
     const startCol = board.columns.get(source.droppableId as StatusType)
     const finishCol = board.columns.get(destination.droppableId as StatusType)
@@ -82,6 +107,42 @@ const Tasks = () => {
             />
           ))}
         </div>
+
+        <Droppable droppableId="delete" type="card">
+          {(provided, snapshot) => (
+            <>
+              <button
+                className={`
+                  ${
+                    isOpen
+                      ? 'w-[20vw] h-[23vh] rounded-md text-3xl'
+                      : 'text-lg w-[40px] h-[40px] rounded-full'
+                  }
+                  ${snapshot.isDraggingOver ? 'bg-dust-red-5' : 'bg-dust-red-3'}
+                  text-bgDefault hover:text-dust-red-5 hover:opacity-90 transition-all duration-200
+                  absolute bottom-24 right-6 z-50 flex flex-col justify-center items-center cursor-pointer shadow-md
+                `}
+                onClick={() => setIsOpen(!isOpen)}
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                <DeleteOutlined />
+                {isOpen && (
+                  <motion.span
+                    className="text-xl"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2, delay: 0.2 }}
+                  >
+                    Drop here to delete task
+                  </motion.span>
+                )}
+              </button>
+              <>{provided.placeholder}</>
+            </>
+          )}
+        </Droppable>
       </DragDropContext>
 
       <CreateTask projectId={projectId} />

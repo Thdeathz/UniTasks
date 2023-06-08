@@ -14,8 +14,7 @@ const DefaultLayout = ({ children }: PropsType) => {
       <div className="grow bg-slate-700 h-full flex flex-col justify-start items-start overflow-hidden">
         <NavBar />
 
-        <div className="w-full h-[85%] grow">{children}</div>
-
+        <div className="w-full grow">{children}</div>
         <p className="text-end text-sm opacity-30 font-medium w-full">
           © 2023 UI/UX HUST Team. All Rights Reserved.
         </p>

@@ -19,19 +19,31 @@ type NavItemProps = {
 
 const NavItem = ({ icon, text, path }: NavItemProps) => {
   const navigate = useNavigate()
+  const currentPath = useLocation().pathname
 
-  const isActive = useLocation().pathname.includes(path)
+  const isMyTaskPage = currentPath === '/'
+  const isActive = currentPath.includes(path) || (isMyTaskPage && path === 'tasks')
 
   let navigatePath = path
 
+  if (currentPath.includes('/project')) {
+    const { projectId } = useParams()
+    navigatePath = `/project/${projectId}/${path}`
+  }
+
+  if ((isMyTaskPage && path === 'tasks') || (currentPath === '/calendar' && path === 'tasks'))
+    navigatePath = '/'
+  if (isMyTaskPage && path === 'calendar') navigatePath = 'calendar'
+
   return (
-    <div className="relative">
+    <div className="relative h-full flex justify-center items-center">
       <button
         className={
           isActive
-            ? 'font-semibold text-textHover gap-2 transition-colors flex justify-center items-center px-4 py-3'
-            : 'text-noneSelected font-medium hover:text-textHover gap-2 transition-colors flex justify-center items-center px-4 py-3'
+            ? 'font-semibold text-textHover gap-2 transition-colors flex justify-center items-center px-4'
+            : 'text-noneSelected font-medium hover:text-textHover gap-2 transition-colors flex justify-center items-center px-4'
         }
+        onClick={() => navigate(navigatePath)}
       >
         {icon}
         <span>{text}</span>
@@ -49,7 +61,7 @@ const NavBar = () => {
   const currentPath = useLocation().pathname
 
   const isCreatePage = currentPath.includes('/create')
-  const isMyTaskPage = currentPath === '/'
+  const isMyTaskPage = currentPath === '/' || currentPath === '/calendar'
 
   let rightContent = (
     <>
@@ -64,8 +76,8 @@ const NavBar = () => {
   }
 
   return (
-    <div className="flex h-[7vh] justify-between items-center border-b-2 border-borderLine pr-4 w-full">
-      <div className="flex justify-center items-center">{rightContent}</div>
+    <div className="flex min-h-[7vh] justify-between items-center border-b-2 border-borderLine pr-4 w-full">
+      <div className="flex justify-center items-center h-full">{rightContent}</div>
       <div className="flex justify-center items-center gap-3">
         <div className="flex justify-center items-center px-3 py-1 gap-1 border border-disabled rounded-full">
           <SearchOutlined className="text-textHover" />

@@ -4,7 +4,7 @@ import { Modal } from 'antd'
 type PropsType = {
   title: string
   icon: React.ReactNode
-  onOk: () => void
+  onOk?: () => void
   onCancel?: () => void
 }
 
