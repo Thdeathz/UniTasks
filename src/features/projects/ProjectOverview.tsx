@@ -73,6 +73,11 @@ const ProjectOverview = () => {
   const [board] = useBoardStore(state => [state.board])
   const [projects] = useProjectStore(state => [state.projects])
 
+  let todo = 0
+  let inprogress = 0
+  let reviewing = 0
+  let completed = 0
+
   return (
     <ProjectLayout projectName={projects.get(projectId as string)?.name as string}>
       <div className="bg-neutral-3 h-full p-3 flex justify-center items-center gap-4">
@@ -103,15 +108,29 @@ const ProjectOverview = () => {
             <p className="text-2xl font-semibold mb-4">About project</p>
             <div className="flex justify-between items-start">
               <div className="flex flex-col justify-start items-start gap-4">
-                {Array.from(board.columns.entries()).map(([id, column]) => (
-                  <EachColumn
-                    key={id}
-                    id={id}
-                    tasks={column.tasks.filter(task => task.projectId === projectId)}
-                  />
-                ))}
+                {Array.from(board.columns.entries()).map(([id, column]) => {
+                  if (id === 'todo')
+                    todo = column.tasks.filter(task => task.projectId === projectId).length
+                  if (id === 'inprogress')
+                    inprogress = column.tasks.filter(task => task.projectId === projectId).length
+                  if (id === 'reviewing')
+                    reviewing = column.tasks.filter(task => task.projectId === projectId).length
+                  if (id === 'completed')
+                    completed = column.tasks.filter(task => task.projectId === projectId).length
+
+                  return (
+                    <EachColumn
+                      key={id}
+                      id={id}
+                      tasks={column.tasks.filter(task => task.projectId === projectId)}
+                    />
+                  )
+                })}
               </div>
-              <Progress type="circle" percent={75} />
+              <Progress
+                type="circle"
+                percent={(completed / (todo + inprogress + reviewing + completed)) * 100}
+              />
             </div>
           </div>
         </div>

@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  AppstoreOutlined,
   BellOutlined,
   CalendarOutlined,
   FileTextOutlined,
@@ -11,6 +10,9 @@ import {
 import { Avatar, Tooltip } from 'antd'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import useCredentialStore from '~/stores/CredentialStore'
+import { auth } from '~/firebase/config'
+import { signOut } from 'firebase/auth'
 
 type NavItemProps = {
   icon: React.ReactNode
@@ -44,7 +46,7 @@ const NavItem = ({ icon, text, path }: NavItemProps) => {
             ? 'font-semibold text-textHover gap-2 transition-colors flex justify-center items-center px-4'
             : 'text-noneSelected font-medium hover:text-textHover gap-2 transition-colors flex justify-center items-center px-4'
         }
-        onClick={() => navigate(navigatePath)}
+        onClick={() => !isActive && navigate(navigatePath)}
       >
         {icon}
         <span>{text}</span>
@@ -62,10 +64,32 @@ const NavItem = ({ icon, text, path }: NavItemProps) => {
 }
 
 const NavBar = () => {
+  const navigate = useNavigate()
   const currentPath = useLocation().pathname
 
   const isCreatePage = currentPath.includes('/create')
   const isMyTaskPage = currentPath === '/' || currentPath === '/calendar'
+
+  const [credential, setCredential] = useCredentialStore(state => [
+    state.credential,
+    state.setCredential
+  ])
+
+  const handleLogout = () => {
+    try {
+      signOut(auth).then(() => {
+        setCredential({
+          uid: '',
+          email: '',
+          displayName: '',
+          avatar: ''
+        })
+        navigate('/login')
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   let rightContent = (
     <>
@@ -76,7 +100,7 @@ const NavBar = () => {
   )
 
   if (isCreatePage) {
-    rightContent = <p className="pl-4 py-3 font-semibold text-xl">Create Project</p>
+    rightContent = <p className="pl-4 font-semibold text-xl">Create Project</p>
   }
 
   return (
@@ -96,7 +120,10 @@ const NavBar = () => {
           className="flex justify-center items-center cursor-pointer"
           size={32}
           icon={<UserOutlined />}
+          src={credential.avatar}
         />
+        <p>{credential.displayName}</p>
+        <button onClick={() => handleLogout()}>Logout</button>
       </div>
     </div>
   )

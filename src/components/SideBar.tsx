@@ -66,7 +66,7 @@ const SubMenuItem = ({ project }: SubMenuItemProps) => {
         ${isActived && 'text-primary-5 border-l-2'}
         font-medium pl-3 border-l ml-3 pb-1 cursor-pointer text-noneSelected hover:text-borderHover 
       `}
-      onClick={() => naivgate(`/project/${project.id}/tasks`)}
+      onClick={() => naivgate(`/project/${project.id}/overview`)}
     >
       {project.name}
     </button>

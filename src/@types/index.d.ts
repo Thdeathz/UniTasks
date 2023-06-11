@@ -48,3 +48,10 @@ type ProjectType = {
   name: string
   description: string
 }
+
+type UserCredential = {
+  uid: string
+  email: string
+  displayName: string
+  avatar: string
+}

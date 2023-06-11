@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import ProjectLayout from '~/components/Layouts/ProjectLayout'
 import { DragDropContext, OnDragEndResponder } from 'react-beautiful-dnd'
 import useBoardStore from '~/stores/BoardStore'
@@ -6,11 +6,9 @@ import EachColumn from './EachColumn'
 import CreateTask from './CreateTask'
 import { useParams } from 'react-router-dom'
 import useProjectStore from '~/stores/ProjectStore'
-import { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+import { DeleteOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 import { StrictModeDroppable as Droppable } from '~/helpers/StrictModeDroppable'
-import { showDeleteConfirm } from '~/components/ComfirmModal'
-import { notification } from 'antd'
 import { toast } from 'react-toastify'
 
 const Tasks = () => {
