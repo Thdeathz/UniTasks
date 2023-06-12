@@ -19,6 +19,7 @@ export default {
       danger: '#FF7875',
       dragging: '#BAE7FF',
       checked: '#73D13D',
+      tooltip: 'rgba(0, 0, 0, 0.65)',
       'primary-1': '#E6F7FF',
       'primary-2': '#BAE7FF',
       'primary-3': '#91D5FF',

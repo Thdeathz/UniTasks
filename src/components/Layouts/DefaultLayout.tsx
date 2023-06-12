@@ -45,9 +45,6 @@ const DefaultLayout = ({ children }: PropsType) => {
           >
             {children}
           </motion.div>
-          <p className="text-end text-sm opacity-30 font-medium w-full">
-            © 2023 UI/UX HUST Team. All Rights Reserved.
-          </p>
         </div>
       </div>
     </AnimatePresence>

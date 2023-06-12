@@ -10,6 +10,7 @@ import Login from './features/auth/Login'
 import Register from './features/auth/Register'
 import PersistLogin from './features/auth/PersistLogin'
 import LoggedIn from './features/auth/LoggedIn'
+import ProjectList from './features/projects/ProjectList'
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
             <Route path="calendar" element={<MyCalendar />} />
 
             <Route path="project">
+              <Route index element={<ProjectList />} />
+
               <Route path=":projectId">
                 <Route path="tasks" element={<Tasks />} />
 

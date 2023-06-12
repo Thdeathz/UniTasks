@@ -39,7 +39,7 @@ const SideMenuItem = ({ icon, activedIcon, text, isOpen, path }: SideMenuItemPro
     (useLocation().pathname.slice(1) === 'calendar' && path === '/')
 
   return (
-    <Tooltip placement="right" title={!isOpen && text}>
+    <Tooltip placement="right" title={!isOpen && text} arrow={false}>
       <button
         className={`
         ${isActived ? 'hover:bg-primary-2 text-primary-5' : 'hover:bg-primary-1'}
@@ -74,6 +74,7 @@ const SubMenuItem = ({ project }: SubMenuItemProps) => {
 }
 
 const SideBar = () => {
+  const navigate = useNavigate()
   const [isSideBarOpen, isSubMenuOpen, setIsSideBarOpen, setIsSubMenuOpen] = useBoardStore(
     state => [
       state.isSideBarOpen,
@@ -120,7 +121,7 @@ const SideBar = () => {
 
         <div className="w-full">
           <div className="flex justify-between items-center w-full text-noneSelected">
-            <Tooltip placement="right" title={!isSideBarOpen && 'Project'}>
+            <Tooltip placement="right" title={!isSideBarOpen && 'Project'} arrow={false}>
               <button
                 className={`
                 ${isSideBarOpen ? 'py-2 px-2' : 'py-2 px-4'}

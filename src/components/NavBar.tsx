@@ -4,15 +4,12 @@ import {
   CalendarOutlined,
   FileTextOutlined,
   PieChartOutlined,
-  SearchOutlined,
-  UserOutlined
+  SearchOutlined
 } from '@ant-design/icons'
-import { Avatar, Tooltip } from 'antd'
+import { Tooltip } from 'antd'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import useCredentialStore from '~/stores/CredentialStore'
-import { auth } from '~/firebase/config'
-import { signOut } from 'firebase/auth'
+import AccountPopover from './AccountPopover'
 
 type NavItemProps = {
   icon: React.ReactNode
@@ -64,32 +61,11 @@ const NavItem = ({ icon, text, path }: NavItemProps) => {
 }
 
 const NavBar = () => {
-  const navigate = useNavigate()
   const currentPath = useLocation().pathname
 
   const isCreatePage = currentPath.includes('/create')
+  const isProjectPage = currentPath === '/project'
   const isMyTaskPage = currentPath === '/' || currentPath === '/calendar'
-
-  const [credential, setCredential] = useCredentialStore(state => [
-    state.credential,
-    state.setCredential
-  ])
-
-  const handleLogout = () => {
-    try {
-      signOut(auth).then(() => {
-        setCredential({
-          uid: '',
-          email: '',
-          displayName: '',
-          avatar: ''
-        })
-        navigate('/login')
-      })
-    } catch (error) {
-      console.error(error)
-    }
-  }
 
   let rightContent = (
     <>
@@ -103,6 +79,10 @@ const NavBar = () => {
     rightContent = <p className="pl-4 font-semibold text-xl">Create Project</p>
   }
 
+  if (isProjectPage) {
+    rightContent = <p className="pl-4 font-semibold text-xl">Projects</p>
+  }
+
   return (
     <div className="flex min-h-[7vh] justify-between items-center border-b-2 border-borderLine pr-4 w-full">
       <div className="flex justify-center items-center h-full">{rightContent}</div>
@@ -112,18 +92,11 @@ const NavBar = () => {
           <input className="grow outline-none text-base" placeholder="Search something..." />
         </div>
 
-        <Tooltip placement="bottom" title="Notifications">
+        <Tooltip placement="bottom" title="Notifications" arrow={false}>
           <BellOutlined className="text-2xl flex justify-center items-center text-noneSelected cursor-pointer hover:text-textHover transition-colors" />
         </Tooltip>
 
-        <Avatar
-          className="flex justify-center items-center cursor-pointer"
-          size={32}
-          icon={<UserOutlined />}
-          src={credential.avatar}
-        />
-        <p>{credential.displayName}</p>
-        <button onClick={() => handleLogout()}>Logout</button>
+        <AccountPopover />
       </div>
     </div>
   )

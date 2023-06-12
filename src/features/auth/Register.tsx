@@ -4,11 +4,11 @@ import GoogleLogo from '~/assets/google_logo.png'
 import FacebookLogo from '~/assets/facebook_logo.png'
 import { useNavigate } from 'react-router-dom'
 import AuthLayout from '~/components/Layouts/AuthLayout'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { auth } from '~/firebase/config'
 import useCredentialStore from '~/stores/CredentialStore'
 import { toast } from 'react-toastify'
-import { LoadingOutlined } from '@ant-design/icons'
+import { LoadingOutlined, LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons'
 
 type CredentialType = {
   fullname: string
@@ -23,6 +23,7 @@ const Register = () => {
   const [form] = Form.useForm()
   const [setCredential] = useCredentialStore(state => [state.setCredential])
   const [isloading, setIsLoading] = useState<boolean>(false)
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false)
 
   const onFinish = (values: CredentialType) => {
     const { fullname, email, password } = values
@@ -31,17 +32,41 @@ const Register = () => {
       .then(userCredential => {
         const user = userCredential.user
         const { uid, email, displayName, photoURL } = user
-        if (!uid || !email || !displayName || !photoURL) return
 
-        setCredential({ uid, email, displayName, avatar: photoURL })
-        form.resetFields()
-        toast.success('Create new account successfully!', {
-          toastId: 'register-success'
+        if (!auth.currentUser) return
+
+        updateProfile(auth.currentUser, {
+          displayName: fullname
         })
-        navigate('/')
+          .then(() => {
+            setCredential({
+              uid,
+              email: email as string,
+              displayName: fullname,
+              avatar: photoURL as string
+            })
+            form.resetFields()
+            toast.success('Create new account successfully!', {
+              toastId: 'register-success'
+            })
+            navigate('/')
+          })
+          .catch(error => {
+            console.error(error)
+          })
       })
       .catch(error => {
         console.error(error)
+        const receivedError = error as { code: string; message: string }
+        console.log('==> error code', receivedError.code)
+        if (receivedError.code === 'auth/email-already-in-use') {
+          form.setFields([
+            {
+              name: 'email',
+              errors: ['Email already in use.']
+            }
+          ])
+        }
       })
       .finally(() => {
         setIsLoading(false)
@@ -58,52 +83,50 @@ const Register = () => {
         size="large"
         onFinish={onFinish}
         autoComplete="off"
-        className="mt-4 w-full items-start"
+        className="mt-2 w-full"
+        layout="vertical"
       >
+        <Form.Item name="fullname" rules={[{ required: true, message: 'Please enter your name.' }]}>
+          <Input
+            prefix={<UserOutlined className="site-form-item-icon" />}
+            placeholder="Display name"
+            maxLength={32}
+          />
+        </Form.Item>
+
         <Form.Item
           name="email"
-          label="Email"
           rules={[
             { required: true, message: 'Email is required.' },
             { pattern: EMAIL_REGEX, message: 'Email is not valid.' }
           ]}
         >
-          <Input placeholder="Email" />
+          <Input prefix={<MailOutlined className="site-form-item-icon" />} placeholder="Email" />
         </Form.Item>
 
-        <Form.Item
-          name="password"
-          label="Password"
-          rules={[{ required: true, message: 'Password is required.' }]}
-        >
-          <Input type="password" placeholder="Password" />
+        <Form.Item name="password" rules={[{ required: true, message: 'Password is required.' }]}>
+          <Input.Password
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            placeholder="Password"
+            visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
+          />
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" ghost htmlType="submit" block>
-            {isloading ? <LoadingOutlined /> : 'Create account'}
+          <Button
+            className="flex justify-center items-center"
+            type="primary"
+            ghost
+            htmlType="submit"
+            block
+          >
+            {isloading ? (
+              <LoadingOutlined className="text-lg flex justify-center items-center" />
+            ) : (
+              'Create account'
+            )}
           </Button>
         </Form.Item>
-
-        <Divider plain>or register with</Divider>
-
-        <div className="flex justify-between items-center w-full gap-4">
-          <button
-            type="button"
-            className="basis-1/2 border border-disabled flex justify-center gap-2 items-center p-2 rounded-md hover:border-textHover transition-colors"
-          >
-            <img src={GoogleLogo} className="w-[20px]" />
-            <span className="font-medium">Google</span>
-          </button>
-
-          <button
-            type="button"
-            className="basis-1/2 border border-disabled flex justify-center gap-2 items-center p-2 rounded-md hover:border-textHover transition-colors"
-          >
-            <img src={FacebookLogo} className="w-[20px]" />
-            <span className="font-medium">Facebook</span>
-          </button>
-        </div>
 
         <div className="mt-2 text-base">
           Already has account?{' '}

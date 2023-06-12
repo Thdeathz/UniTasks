@@ -15,8 +15,8 @@ const PersistLogin = () => {
     onAuthStateChanged(auth, user => {
       if (user) {
         const { uid, email, displayName, photoURL } = user
-        if (!uid || !email || !displayName || !photoURL) return
-        setCredential({ uid, email, displayName, avatar: photoURL })
+        if (!uid || !email || !displayName) return
+        setCredential({ uid, email, displayName, avatar: photoURL as string })
         setIsLoading(false)
       } else {
         setIsLoading(false)

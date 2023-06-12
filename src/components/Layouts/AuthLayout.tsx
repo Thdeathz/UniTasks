@@ -1,6 +1,7 @@
 import React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import AppLogo from '~/assets/Logo.png'
+import { ToastContainer } from 'react-toastify'
 
 type PropsType = {
   children: React.ReactNode
@@ -27,6 +28,7 @@ const AuthLayout = ({ children }: PropsType) => {
       }}
     >
       <div className="w-screen h-screen flex justify-center items-center overflow-hidden">
+        <ToastContainer autoClose={2000} style={{ fontSize: '16px' }} />
         <motion.div
           className="border border-disabled rounded-md p-4 flex flex-col justify-start items-start gap-2"
           variants={variants}

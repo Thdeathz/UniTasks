@@ -151,14 +151,14 @@ const TaskItem = ({ title, task, showHeader }: PropsType) => {
                   <Tag key={`tag-${index}`} type="custom" text={tag.name} color={tag.color} />
                 ))}
 
-                <Tooltip placement="bottom" title="New tag">
+                <Tooltip placement="bottom" title="New tag" arrow={false}>
                   <button className="text-sm font-medium flex justify-center items-center gap-1 text-noneSelected border p-1 rounded-md border-disabled border-dashed hover:text-textHover hover:border-textHover transition-colors">
                     <TagOutlined />
                   </button>
                 </Tooltip>
               </div>
 
-              <Tooltip placement="bottom" title="Edit task">
+              <Tooltip placement="bottom" title="Edit task" arrow={false}>
                 <EditOutlined className="cursor-pointer hover:text-textHover transition-colors text-lg text-noneSelected" />
               </Tooltip>
             </div>
@@ -181,7 +181,7 @@ const TaskItem = ({ title, task, showHeader }: PropsType) => {
                   <UserItem key={`assigned-user-${index}`} size="large" name={user as string} />
                 ))}
 
-                <Tooltip placement="bottom" title="New user">
+                <Tooltip placement="bottom" title="New user" arrow={false}>
                   <PlusCircleOutlined className="cursor-pointer text-lg text-noneSelected hover:text-textHover transition-colors flex justify-center items-center" />
                 </Tooltip>
               </div>

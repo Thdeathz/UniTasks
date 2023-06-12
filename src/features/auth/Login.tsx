@@ -24,6 +24,7 @@ const Login = () => {
   const [form] = Form.useForm()
   const [setCredential] = useCredentialStore(state => [state.setCredential])
   const [isloading, setIsLoading] = useState<boolean>(false)
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false)
 
   const onFinish = (values: CredentialType) => {
     setIsLoading(true)
@@ -88,7 +89,6 @@ const Login = () => {
         onFinish={onFinish}
         autoComplete="off"
         className="mt-4 w-full"
-        disabled
       >
         <Form.Item
           name="email"
@@ -101,16 +101,26 @@ const Login = () => {
         </Form.Item>
 
         <Form.Item name="password" rules={[{ required: true, message: 'Password is required.' }]}>
-          <Input
+          <Input.Password
             prefix={<LockOutlined className="site-form-item-icon" />}
-            type="password"
             placeholder="Password"
+            visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
           />
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" ghost htmlType="submit" block>
-            {isloading ? <LoadingOutlined /> : 'Login'}
+          <Button
+            className="flex justify-center items-center"
+            type="primary"
+            ghost
+            htmlType="submit"
+            block
+          >
+            {isloading ? (
+              <LoadingOutlined className="text-lg flex justify-center items-center" />
+            ) : (
+              'Login'
+            )}
           </Button>
         </Form.Item>
 
