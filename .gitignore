@@ -32,3 +32,5 @@ firestore.*
 *.rules
 *.json
 .firebaserc
+
+!vercel.json
