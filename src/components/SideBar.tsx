@@ -9,9 +9,13 @@ import {
   CaretDownOutlined,
   PlusSquareFilled,
   SnippetsFilled,
-  CaretUpOutlined
+  CaretUpOutlined,
+  DeleteOutlined,
+  DeleteFilled,
+  ProjectFilled,
+  UserOutlined
 } from '@ant-design/icons'
-import { Tooltip } from 'antd'
+import { Divider, Tooltip } from 'antd'
 import { useLocation, useNavigate } from 'react-router-dom'
 import AppLogo from '~/assets/Logo.png'
 import IconOnly from '~/assets/Icon_only.png'
@@ -36,7 +40,8 @@ const SideMenuItem = ({ icon, activedIcon, text, isOpen, path }: SideMenuItemPro
   const isActived =
     useLocation().pathname.slice(1) === path.slice(1) ||
     (useLocation().pathname === '/' && path === '/') ||
-    (useLocation().pathname.slice(1) === 'calendar' && path === '/')
+    (useLocation().pathname.slice(1) === 'calendar' && path === '/') ||
+    (useLocation().pathname.slice(1).includes('project') && path === '/project')
 
   return (
     <Tooltip placement="right" title={!isOpen && text} arrow={false}>
@@ -92,9 +97,7 @@ const SideBar = () => {
         isSideBarOpen ? 'w-52' : 'w-min'
       } flex flex-col justify-between items-start border-r-2 border-borderLine h-full`}
     >
-      <div
-        className={`${isSideBarOpen && 'px-2'} flex flex-col justify-start items-start gap-2 py-4`}
-      >
+      <div className={`${isSideBarOpen && 'px-2'} gap-2 py-4`}>
         {isSideBarOpen ? (
           <img className="w-2/3 mb-4 px-2" src={AppLogo} alt="app-logo" />
         ) : (
@@ -112,53 +115,71 @@ const SideBar = () => {
 
           <SideMenuItem
             isOpen={isSideBarOpen}
-            icon={<PlusSquareOutlined className="text-xl flex justify-start items-center" />}
-            activedIcon={<PlusSquareFilled className="text-xl flex justify-start items-center" />}
-            text="New Project"
-            path="/project/create"
+            icon={<ProjectOutlined className="text-xl flex justify-start items-center" />}
+            activedIcon={<ProjectFilled className="text-xl flex justify-start items-center" />}
+            text="Projects"
+            path="/project"
           />
-        </div>
 
-        <div className="w-full">
-          <div className="flex justify-between items-center w-full text-noneSelected">
-            <Tooltip placement="right" title={!isSideBarOpen && 'Project'} arrow={false}>
-              <button
-                className={`
+          {/* <div className="w-full">
+            <div className="flex justify-between items-center w-full text-noneSelected">
+              <Tooltip placement="right" title={!isSideBarOpen && 'Project'} arrow={false}>
+                <button
+                  className={`
                 ${isSideBarOpen ? 'py-2 px-2' : 'py-2 px-4'}
                 flex w-full justify-between font-medium items-center text-noneSelected rounded transition-colors hover:bg-primary-1`}
-                onClick={() => {
-                  if (isSideBarOpen) setIsSubMenuOpen(!isSubMenuOpen)
-                }}
-              >
-                <div className="flex justify-start items-center gap-2">
-                  <ProjectOutlined className="text-xl flex justify-start items-center" />
-                  <span className={`${!isSideBarOpen && 'hidden'} `}>Project</span>
-                </div>
+                  onClick={() => {
+                    if (isSideBarOpen) setIsSubMenuOpen(!isSubMenuOpen)
+                  }}
+                >
+                  <div className="flex justify-start items-center gap-2">
+                    <ProjectOutlined className="text-xl flex justify-start items-center" />
+                    <span className={`${!isSideBarOpen && 'hidden'} `}>Project</span>
+                  </div>
 
-                {isSideBarOpen ? (
-                  isSubMenuOpen ? (
-                    <CaretUpOutlined />
+                  {isSideBarOpen ? (
+                    isSubMenuOpen ? (
+                      <CaretUpOutlined />
+                    ) : (
+                      <CaretDownOutlined />
+                    )
                   ) : (
-                    <CaretDownOutlined />
-                  )
-                ) : (
-                  <></>
-                )}
-              </button>
-            </Tooltip>
-          </div>
-
-          {isSideBarOpen && isSubMenuOpen && (
-            <div className="flex w-full">
-              <div className="flex flex-col justify-start items-start">
-                <>
-                  {Array.from(projects.entries()).map(([id, project], index) => (
-                    <SubMenuItem key={`each-project-${index}`} project={project} />
-                  ))}
-                </>
-              </div>
+                    <></>
+                  )}
+                </button>
+              </Tooltip>
             </div>
-          )}
+
+            {isSideBarOpen && isSubMenuOpen && (
+              <div className="flex w-full">
+                <div className="flex flex-col justify-start items-start">
+                  <>
+                    {Array.from(projects.entries()).map(([id, project], index) => (
+                      <SubMenuItem key={`each-project-${index}`} project={project} />
+                    ))}
+                  </>
+                </div>
+              </div>
+            )}
+          </div> */}
+
+          <Divider className="m-0" />
+
+          <SideMenuItem
+            isOpen={isSideBarOpen}
+            icon={<UserOutlined className="text-xl flex justify-start items-center" />}
+            activedIcon={<UserOutlined className="text-xl flex justify-start items-center" />}
+            text="Account"
+            path="/account"
+          />
+
+          <SideMenuItem
+            isOpen={isSideBarOpen}
+            icon={<DeleteOutlined className="text-xl flex justify-start items-center" />}
+            activedIcon={<DeleteFilled className="text-xl flex justify-start items-center" />}
+            text="Trash"
+            path="/trash"
+          />
         </div>
       </div>
 

@@ -15,7 +15,7 @@ type PopoverItemPropsType = {
 const PopoverItem = ({ children, onClick }: PopoverItemPropsType) => {
   return (
     <button
-      className="w-full hover:bg-primary-1 flex justify-start items-center gap-2 px-2 py-1 rounded-md font-medium text-base text-noneSelected"
+      className="w-full hover:bg-primary-1 flex justify-start items-center gap-2 p-2 rounded-md font-medium text-base text-noneSelected"
       onClick={onClick}
     >
       {children}

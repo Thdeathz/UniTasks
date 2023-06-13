@@ -35,8 +35,8 @@ const EachColumn = ({ id, tasks, index, showHeader }: PropsType) => {
   )
 
   return (
-    <div className="w-[24%] flex flex-col justify-start items-start max-h-full relative">
-      <div className="flex justify-between items-center w-full">
+    <div className="">
+      <div className="flex justify-between items-center">
         <div className="flex justify-center items-center gap-2">
           {title}
 
@@ -54,12 +54,12 @@ const EachColumn = ({ id, tasks, index, showHeader }: PropsType) => {
         <EllipsisOutlined className="text-xl font-semibold text-noneSelected cursor-pointer hover:text-textHover transition-colors" />
       </div>
 
-      <div className="w-full h-[1px] bg-disabled rounded-full mt-2" />
+      <div className="h-[1.5px] bg-disabled rounded-full mt-2" />
 
       <Droppable droppableId={id} type="card">
         {(provided, snapshot) => (
           <ul
-            className={`flex flex-col justify-start items-center p-2 w-full mt-4 shadow-sm rounded overflow-y-scroll hidden-scroll-bar h-full ${
+            className={`p-2 mt-4 shadow-sm rounded max-h-[83vh] hidden-scroll-bar overflow-y-auto ${
               snapshot.isDraggingOver ? 'bg-dragging' : 'bg-bgSecondary '
             }`}
             {...provided.droppableProps}
@@ -71,7 +71,7 @@ const EachColumn = ({ id, tasks, index, showHeader }: PropsType) => {
                   <Draggable key={task.id} draggableId={task.id} index={index}>
                     {(provided, snapshot) => (
                       <div
-                        className={`${snapshot.isDragging ? 'w-[19vw]' : 'w-full'} mb-4`}
+                        className={`mb-4`}
                         key={`each-task-${index}`}
                         ref={provided.innerRef}
                         {...provided.draggableProps}
@@ -84,7 +84,7 @@ const EachColumn = ({ id, tasks, index, showHeader }: PropsType) => {
                 ))}
               </>
             ) : (
-              <Empty description={<span>No task found</span>} />
+              <Empty className="py-2" description={<span>No task found</span>} />
             )}
             <>{provided.placeholder}</>
           </ul>

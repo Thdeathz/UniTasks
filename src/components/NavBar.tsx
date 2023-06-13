@@ -52,7 +52,7 @@ const NavItem = ({ icon, text, path }: NavItemProps) => {
         {isActive && (
           <motion.div
             layoutId="underline"
-            className="w-4/5 h-[2px] bg-textHover absolute bottom-0 right-[10%]"
+            className="w-4/5 h-[1.5px] bg-textHover absolute bottom-0 right-[10%]"
           ></motion.div>
         )}
       </>
@@ -65,6 +65,8 @@ const NavBar = () => {
 
   const isCreatePage = currentPath.includes('/create')
   const isProjectPage = currentPath === '/project'
+  const isAccountPage = currentPath === '/account'
+  const isTrashPage = currentPath === '/trash'
   const isMyTaskPage = currentPath === '/' || currentPath === '/calendar'
 
   let rightContent = (
@@ -83,8 +85,16 @@ const NavBar = () => {
     rightContent = <p className="pl-4 font-semibold text-xl">Projects</p>
   }
 
+  if (isAccountPage) {
+    rightContent = <p className="pl-4 font-semibold text-xl">Account</p>
+  }
+
+  if (isTrashPage) {
+    rightContent = <p className="pl-4 font-semibold text-xl">Trash</p>
+  }
+
   return (
-    <div className="flex min-h-[7vh] justify-between items-center border-b-2 border-borderLine pr-4 w-full">
+    <div className="flex min-h-[7vh] justify-between items-center border-b-2 border-borderLine pr-4 w-full sticky top-0 z-50">
       <div className="flex justify-center items-center h-full">{rightContent}</div>
       <div className="flex justify-center items-center gap-3">
         <div className="flex justify-center items-center px-3 py-1 gap-1 border border-disabled rounded-full">

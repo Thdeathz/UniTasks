@@ -6,13 +6,13 @@ import {
   MessageOutlined,
   PlusCircleOutlined,
   PlusOutlined,
-  SendOutlined,
   TagOutlined,
   UserOutlined
 } from '@ant-design/icons'
 import Tag from '~/components/Tag'
 import SubTask from '~/components/SubTask'
 import useProjectStore from '~/stores/ProjectStore'
+import ChatBox from '~/components/ChatBox'
 
 type PropsType = {
   title: React.ReactNode
@@ -196,23 +196,7 @@ const TaskItem = ({ title, task, showHeader }: PropsType) => {
 
           <div className="basis-1/3 bg-bgSecondary h-full p-2 rounded-e flex flex-col items-start justify-start">
             <p className="font-semibold text-lg">Comments</p>
-            <div className="grow flex flex-col justify-start items-start gap-3 mt-2">
-              <div className="bg-bgDefault py-1 px-2 rounded-tl-xl rounded-e-xl max-w-[90%]">
-                <p className="font-semibold">Duc Luong</p>
-                <p>Task này to quá ko mn :(( t nghĩ nên chia nhỏ hơn nữa</p>
-              </div>
-
-              <div className="bg-textHover text-bgDefault py-1 px-2 rounded-s-xl rounded-tr-xl max-w-[90%] self-end">
-                <p>Ngon :))</p>
-              </div>
-            </div>
-            <div className="w-full flex justify-center items-center bg-bgDefault py-2 px-3 rounded-md gap-2">
-              <input
-                className="border-none outline-none grow bg-trans"
-                placeholder="Your comment..."
-              />
-              <SendOutlined className="cursor-pointer text-noneSelected hover:text-textHover transition-colors" />
-            </div>
+            <ChatBox />
           </div>
         </div>
       </Modal>

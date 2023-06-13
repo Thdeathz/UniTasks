@@ -19,7 +19,7 @@ const variants = {
   exit: { opacity: 0, x: -0, y: -10 }
 }
 
-const DefaultLayout = ({ children }: PropsType) => {
+const HomeLayout = ({ children }: PropsType) => {
   return (
     <AnimatePresence
       initial={true}
@@ -37,7 +37,7 @@ const DefaultLayout = ({ children }: PropsType) => {
           <NavBar />
 
           <motion.div
-            className="w-full grow"
+            className="w-full grow overflow-y-auto"
             initial="hidden"
             animate="enter"
             exit="exit"
@@ -51,4 +51,4 @@ const DefaultLayout = ({ children }: PropsType) => {
   )
 }
 
-export default DefaultLayout
+export default HomeLayout

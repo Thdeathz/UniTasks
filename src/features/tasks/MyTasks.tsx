@@ -64,7 +64,7 @@ const MyTasks = () => {
   return (
     <DefaultLayout>
       <DragDropContext onDragEnd={handleOnDragEnd}>
-        <div className="flex justify-between items-start mt-2 h-full px-3">
+        <div className="grid grid-cols-4 gap-3 my-2 px-3 h-max">
           {Array.from(board.columns.entries()).map(([id, column], index) => (
             <EachColumn
               index={index}
