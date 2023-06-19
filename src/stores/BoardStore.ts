@@ -15,6 +15,7 @@ interface IBoardState {
   updateTaskStatusInDB: (taskMovedId: string, tasks: TaskType[], status: StatusType) => void
   updatePriorityInDB: (tasks: TaskType[]) => void
   deleteTaskInDB: (task: TaskType) => void
+  rollBackTaskInDB: (task: TaskType) => void
 }
 
 const useBoardStore = create<IBoardState>(set => ({
@@ -107,8 +108,64 @@ const useBoardStore = create<IBoardState>(set => ({
   },
 
   deleteTaskInDB: async task => {
-    await deleteDocument({
-      collectionName: `tasks/${task.id}`
+    await updateDocument({
+      collectionName: `tasks/${task.id}`,
+      data: { status: 'deleted' }
+    })
+
+    set(state => {
+      const newCols = new Map(state.board.columns)
+
+      const newTask = { ...task, status: 'deleted' } as TaskType
+
+      const deletedCol = newCols.get('deleted')
+
+      if (!deletedCol) {
+        newCols.set('deleted', {
+          id: 'deleted',
+          tasks: [newTask]
+        })
+      } else {
+        newCols.get('deleted')?.tasks.unshift(newTask)
+      }
+
+      return {
+        board: {
+          columns: newCols
+        }
+      }
+    })
+  },
+
+  rollBackTaskInDB: async task => {
+    await updateDocument({
+      collectionName: `tasks/${task.id}`,
+      data: { status: 'todo' }
+    })
+
+    set(state => {
+      const newCols = new Map(state.board.columns)
+
+      const newTask = { ...task, status: 'todo', priority: 0 } as TaskType
+
+      const todoCol = newCols.get('todo')
+
+      if (!todoCol) {
+        newCols.set('todo', {
+          id: 'todo',
+          tasks: [newTask]
+        })
+      } else {
+        newCols.get('todo')?.tasks.unshift(newTask)
+      }
+
+      newCols.get('deleted')?.tasks.splice(task.priority, 1)
+
+      return {
+        board: {
+          columns: newCols
+        }
+      }
     })
   }
 }))

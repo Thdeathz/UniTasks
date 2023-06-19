@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Avatar, Modal, Tooltip } from 'antd'
 import {
   CalendarOutlined,
@@ -6,18 +6,24 @@ import {
   MessageOutlined,
   PlusCircleOutlined,
   PlusOutlined,
+  RollbackOutlined,
   TagOutlined,
   UserOutlined
 } from '@ant-design/icons'
+import { useHover } from 'usehooks-ts'
+import { motion } from 'framer-motion'
 import Tag from '~/components/Tag'
 import SubTask from '~/components/SubTask'
 import useProjectStore from '~/stores/ProjectStore'
 import ChatBox from '~/components/ChatBox'
+import useBoardStore from '~/stores/BoardStore'
+import { toast } from 'react-toastify'
 
 type PropsType = {
   title: React.ReactNode
   task: TaskType
   showHeader?: boolean
+  disabled?: boolean
 }
 
 type UserItemPropsType = {
@@ -38,15 +44,37 @@ const UserItem = ({ size, name }: UserItemPropsType) => {
   )
 }
 
-const TaskItem = ({ title, task, showHeader }: PropsType) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
   const [projects] = useProjectStore(state => [state.projects])
+  const [board, setBoardState, rollBackTaskInDB] = useBoardStore(state => [
+    state.board,
+    state.setBoardState,
+    state.rollBackTaskInDB
+  ])
+
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const cardRef = useRef<HTMLDivElement>(null)
+  const isHover = useHover(cardRef)
+
+  const handleTaskItemClick = () => {
+    if (disabled) {
+      rollBackTaskInDB(task)
+      toast.success('Rollback task successfully', {
+        toastId: 'rollback-task'
+      })
+      return
+    }
+
+    setIsOpen(true)
+    return
+  }
 
   return (
     <>
       <div
-        className="bg-bgDefault rounded-md shadow cursor-pointer hover:shadow-lg transition-shadow"
-        onClick={() => setIsOpen(true)}
+        className="bg-bgDefault rounded-md shadow cursor-pointer hover:shadow-lg transition-shadow relative"
+        onClick={handleTaskItemClick}
+        ref={cardRef}
       >
         {showHeader && (
           <p className="font-medium text-textHover border-b w-full border-disabled px-2 py-1">
@@ -98,6 +126,19 @@ const TaskItem = ({ title, task, showHeader }: PropsType) => {
             )}
           </div>
         </div>
+
+        {disabled && isHover && (
+          <motion.div
+            className="w-full h-cardBody bg-disabled absolute bottom-0 rounded-b-md flex flex-col gap-1 justify-center text-bgDefault items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+          >
+            <RollbackOutlined className="font-bold flex justify-center items-center text-2xl hover:scale-125 transition-transform" />
+            <p>Roll back</p>
+          </motion.div>
+        )}
       </div>
 
       <Modal

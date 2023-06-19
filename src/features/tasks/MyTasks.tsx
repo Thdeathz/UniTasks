@@ -65,15 +65,18 @@ const MyTasks = () => {
     <DefaultLayout>
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <div className="grid grid-cols-4 gap-3 my-2 px-3 h-max">
-          {Array.from(board.columns.entries()).map(([id, column], index) => (
-            <EachColumn
-              index={index}
-              key={id}
-              id={id}
-              tasks={column.tasks.filter(each => each.assignedUser.includes('Bui Dung'))}
-              showHeader={true}
-            />
-          ))}
+          {Array.from(board.columns.entries()).map(([id, column], index) => {
+            if (id !== 'deleted')
+              return (
+                <EachColumn
+                  index={index}
+                  key={id}
+                  id={id}
+                  tasks={column.tasks.filter(each => each.assignedUser.includes('Bui Dung'))}
+                  showHeader={true}
+                />
+              )
+          })}
         </div>
       </DragDropContext>
     </DefaultLayout>

@@ -21,7 +21,7 @@ const ProjectCalendar = () => {
   )
 
   return (
-    <ProjectLayout projectName={projects.get(projectId as string)?.name as string}>
+    <ProjectLayout projectId={projectId as string}>
       {columns.length !== 0 && (
         <FullCalendar
           viewClassNames={['h-[68%] px-3']}

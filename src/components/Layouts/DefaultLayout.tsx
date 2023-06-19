@@ -37,7 +37,7 @@ const DefaultLayout = ({ children }: PropsType) => {
           <NavBar />
 
           <motion.div
-            className="w-full grow"
+            className="w-full grow h-content"
             initial="hidden"
             animate="enter"
             exit="exit"

@@ -5,7 +5,6 @@ import useBoardStore from '~/stores/BoardStore'
 import EachColumn from './EachColumn'
 import CreateTask from './CreateTask'
 import { useParams } from 'react-router-dom'
-import useProjectStore from '~/stores/ProjectStore'
 import { DeleteOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 import { StrictModeDroppable as Droppable } from '~/helpers/StrictModeDroppable'
@@ -23,7 +22,6 @@ const Tasks = () => {
       state.updatePriorityInDB,
       state.deleteTaskInDB
     ])
-  const [projects] = useProjectStore(state => [state.projects])
 
   const handleOnDragEnd: OnDragEndResponder = async result => {
     const { source, destination } = result
@@ -96,17 +94,20 @@ const Tasks = () => {
   }
 
   return (
-    <ProjectLayout projectName={projects.get(projectId as string)?.name as string}>
+    <ProjectLayout projectId={projectId as string}>
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <div className="grid grid-cols-4 gap-3 my-2 px-3 h-max">
-          {Array.from(board.columns.entries()).map(([id, column], index) => (
-            <EachColumn
-              index={index}
-              key={id}
-              id={id}
-              tasks={column.tasks.filter(task => task.projectId === projectId)}
-            />
-          ))}
+          {Array.from(board.columns.entries()).map(([id, column], index) => {
+            if (id !== 'deleted')
+              return (
+                <EachColumn
+                  index={index}
+                  key={id}
+                  id={id}
+                  tasks={column.tasks.filter(task => task.projectId === projectId)}
+                />
+              )
+          })}
         </div>
 
         <Droppable droppableId="delete" type="card">

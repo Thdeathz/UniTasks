@@ -18,7 +18,8 @@ const columnTitle: {
   todo: 'TO DO',
   inprogress: 'IN PROGRESS',
   reviewing: 'REVIEWING',
-  completed: 'COMPLETED'
+  completed: 'COMPLETED',
+  deleted: 'DELETED'
 }
 
 const EachColumn = ({ id, tasks, index, showHeader }: PropsType) => {

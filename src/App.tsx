@@ -2,7 +2,7 @@ import { Routes, Route, Outlet } from 'react-router-dom'
 import Tasks from './features/tasks/Tasks'
 import CreateProject from './features/projects/CreateProject'
 import MyTasks from './features/tasks/MyTasks'
-import Prefectch from './features/auth/Prefectch'
+import Prefetch from './features/auth/Prefetch'
 import ProjectOverview from './features/projects/ProjectOverview'
 import ProjectCalendar from './features/projects/ProjectCalendar'
 import MyCalendar from './features/auth/MyCalendar'
@@ -24,7 +24,7 @@ function App() {
             <Route path="register" element={<Register />} />
           </Route>
 
-          <Route element={<Prefectch />}>
+          <Route element={<Prefetch />}>
             <Route index element={<MyTasks />} />
 
             <Route path="calendar" element={<MyCalendar />} />

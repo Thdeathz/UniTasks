@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom'
 import useBoardStore from '~/stores/BoardStore'
 import useProjectStore from '~/stores/ProjectStore'
 
-const Prefectch = () => {
+const Prefetch = () => {
   const [getBoard] = useBoardStore(state => [state.getBoard])
   const [getProjects] = useProjectStore(state => [state.getProjects])
 
@@ -14,4 +14,4 @@ const Prefectch = () => {
 
   return <Outlet />
 }
-export default Prefectch
+export default Prefetch

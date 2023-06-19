@@ -2,7 +2,17 @@
 export default {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      height: {
+        content: 'calc(100vh - 3rem)',
+        subContent: 'calc(100vh - 11rem)',
+        profile: 'calc(100vh - 4.5rem)',
+        cardBody: 'calc(100% - 2rem)'
+      },
+      minHeight: {
+        content: 'calc(100vh - 3rem)'
+      }
+    },
     colors: {
       noneSelected: 'rgba(0, 0, 0, 0.45)',
       borderHover: 'rgba(0, 0, 0, 0.65)',
@@ -27,7 +37,9 @@ export default {
       'primary-5': '#40A9FF',
       'neutral-3': '#F5F5F5',
       'dust-red-3': '#FFA39E',
-      'dust-red-5': '#FF4D4F'
+      'dust-red-5': '#FF4D4F',
+      'gold-4': '#FFD666',
+      'gold-5': '#FFC53D'
     }
   },
   plugins: [],

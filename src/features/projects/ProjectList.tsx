@@ -1,61 +1,113 @@
 import React from 'react'
-import { PlusOutlined } from '@ant-design/icons'
-import DefaultLayout from '~/components/Layouts/DefaultLayout'
-import { Avatar, Switch, Tooltip } from 'antd'
+import { PlusOutlined, StarOutlined } from '@ant-design/icons'
+import { Avatar } from 'antd'
 import HomeLayout from '~/components/Layouts/HomeLayout'
 import useProjectStore from '~/stores/ProjectStore'
 import { useNavigate } from 'react-router-dom'
+import useBoardStore from '~/stores/BoardStore'
+import StarButton from '~/components/StarButton'
 
 type ProjectItemPropsType = {
   project: ProjectType
+  upcomingTask: TaskType[]
 }
 
-const ProjectItem = ({ project }: ProjectItemPropsType) => {
+const ProjectItem = ({ project, upcomingTask }: ProjectItemPropsType) => {
   const navigate = useNavigate()
 
   return (
-    <button
-      className="bg-bgDefault h-[18vh] rounded-md shadow-md p-4 gap-4 hover:shadow-lg transition-shadow"
-      onClick={() => navigate(`/project/${project.id}/overview`)}
-    >
-      <div className="flex justify-between items-center mb-4">
-        <p className="text-xl font-semibold">{project.name}</p>
+    <div className="relative">
+      <button
+        className="bg-bgDefault w-full h-[28vh] rounded-2xl shadow-sm p-4 hover:shadow-lg transition-shadow flex flex-col justify-start items-start"
+        onClick={() => navigate(`/project/${project.id}/overview`)}
+      >
+        <div className="flex justify-start items-start gap-2 mb-1">
+          <img src={project.thumbnail} className="w-[40px] rounded-lg object-cover aspect-square" />
+          <p className="text-lg font-semibold truncate">{project.name}</p>
+        </div>
 
-        <Tooltip>
-          <Switch checkedChildren="show" unCheckedChildren="hidden" defaultChecked />
-        </Tooltip>
-      </div>
+        <div className="grow">
+          {upcomingTask.map(task => (
+            <p className="text-sm text-left truncate" key={task.id}>
+              - {task.title}
+            </p>
+          ))}
+          <>
+            {upcomingTask.length === 0 && (
+              <p className="text-sm text-left font-medium text-disabled">No up coming task found</p>
+            )}
+          </>
+        </div>
 
-      <div className="flex justify-between items-center">
-        <Avatar.Group
-          maxCount={3}
-          maxPopoverTrigger="click"
-          maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf', cursor: 'pointer' }}
-        >
-          <Avatar style={{ backgroundColor: '#f56a00' }}>BD</Avatar>
-          <Avatar style={{ backgroundColor: '#f56a00' }}>TL</Avatar>
-          <Avatar style={{ backgroundColor: '#f56a00' }}>TH</Avatar>
-          <Avatar style={{ backgroundColor: '#f56a00' }}>DN</Avatar>
-          <Avatar style={{ backgroundColor: '#f56a00' }}>DL</Avatar>
-        </Avatar.Group>
-      </div>
-    </button>
+        <div className="flex justify-between items-center w-full">
+          <Avatar.Group
+            maxCount={3}
+            maxPopoverTrigger="click"
+            maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf', cursor: 'pointer' }}
+            size={28}
+          >
+            <Avatar
+              className="flex justify-center items-center text-sm"
+              style={{ backgroundColor: '#f56a00' }}
+            >
+              BD
+            </Avatar>
+            <Avatar
+              className="flex justify-center items-center text-sm"
+              style={{ backgroundColor: '#f56a00' }}
+            >
+              TL
+            </Avatar>
+            <Avatar
+              className="flex justify-center items-center text-sm"
+              style={{ backgroundColor: '#f56a00' }}
+            >
+              TH
+            </Avatar>
+            <Avatar
+              className="flex justify-center items-center text-sm"
+              style={{ backgroundColor: '#f56a00' }}
+            >
+              DN
+            </Avatar>
+            <Avatar
+              className="flex justify-center items-center text-sm"
+              style={{ backgroundColor: '#f56a00' }}
+            >
+              DL
+            </Avatar>
+          </Avatar.Group>
+        </div>
+      </button>
+
+      <StarButton stared={false} />
+    </div>
   )
 }
 
 const ProjectList = () => {
   const [projects] = useProjectStore(state => [state.projects])
+  const [board] = useBoardStore(state => [state.board])
 
   return (
     <HomeLayout>
-      <div className="bg-neutral-3 h-full p-4 grid grid-cols-3 gap-4 auto-rows-min">
-        <div className="cursor-pointer hover:text-textHover hover:border-textHover transition-colors rounded-md h-[18vh] flex flex-col gap-2 justify-center items-center text-noneSelected border border-dashed border-noneSelected">
+      <div className="grid grid-cols-4 gap-4 auto-rows-min">
+        <div className="cursor-pointer hover:text-textHover hover:border-textHover transition-colors rounded-2xl h-[28vh] flex flex-col gap-2 justify-center items-center text-noneSelected border border-dashed border-noneSelected">
           <PlusOutlined className="text-3xl flex justify-center items-center" />
           <p className="text-xl font-medium">Create new project</p>
         </div>
 
         {Array.from(projects.entries()).map(([id, project]) => (
-          <ProjectItem key={id} project={project} />
+          <ProjectItem
+            key={id}
+            project={project}
+            upcomingTask={
+              board.columns
+                .get('todo')
+                ?.tasks.filter(task => task.projectId === id)
+                .splice(0, 3) as TaskType[]
+            }
+          />
         ))}
       </div>
     </HomeLayout>

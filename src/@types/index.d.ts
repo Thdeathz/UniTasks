@@ -4,7 +4,7 @@ interface Board {
 
 type Project = Map<string, ProjectType>
 
-type StatusType = 'todo' | 'inprogress' | 'reviewing' | 'completed'
+type StatusType = 'todo' | 'inprogress' | 'reviewing' | 'completed' | 'deleted'
 
 interface Column {
   id: StatusType
@@ -47,6 +47,7 @@ type ProjectType = {
   id: string
   name: string
   description: string
+  thumbnail: string
 }
 
 type UserCredential = {

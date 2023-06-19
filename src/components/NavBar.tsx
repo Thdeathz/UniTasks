@@ -94,12 +94,15 @@ const NavBar = () => {
   }
 
   return (
-    <div className="flex min-h-[7vh] justify-between items-center border-b-2 border-borderLine pr-4 w-full sticky top-0 z-50">
+    <div className="flex min-h-[3rem] max-h-[3rem] justify-between items-center border-b-2 border-borderLine pr-4 w-full sticky top-0 z-50">
       <div className="flex justify-center items-center h-full">{rightContent}</div>
       <div className="flex justify-center items-center gap-3">
         <div className="flex justify-center items-center px-3 py-1 gap-1 border border-disabled rounded-full">
           <SearchOutlined className="text-textHover" />
-          <input className="grow outline-none text-base" placeholder="Search something..." />
+          <input
+            className="grow outline-none text-base bg-none"
+            placeholder="Search something..."
+          />
         </div>
 
         <Tooltip placement="bottom" title="Notifications" arrow={false}>

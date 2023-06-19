@@ -36,15 +36,11 @@ const HomeLayout = ({ children }: PropsType) => {
         <div className="grow h-screen flex flex-col justify-start items-start overflow-hidden">
           <NavBar />
 
-          <motion.div
-            className="w-full grow overflow-y-auto"
-            initial="hidden"
-            animate="enter"
-            exit="exit"
-            variants={variants}
-          >
-            {children}
-          </motion.div>
+          <div className="bg-neutral-3 w-full grow min-h-content h-max p-3 overflow-y-auto">
+            <motion.div initial="hidden" animate="enter" exit="exit" variants={variants}>
+              {children}
+            </motion.div>
+          </div>
         </div>
       </div>
     </AnimatePresence>

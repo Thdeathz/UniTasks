@@ -22,7 +22,8 @@ const columnTitle: {
   todo: 'TO DO',
   inprogress: 'IN PROGRESS',
   reviewing: 'REVIEWING',
-  completed: 'COMPLETED'
+  completed: 'COMPLETED',
+  deleted: 'DELETED'
 }
 
 const MemberInfo = ({ name, email }: MemberInfoPropsType) => {
@@ -79,9 +80,9 @@ const ProjectOverview = () => {
   let completed = 0
 
   return (
-    <ProjectLayout projectName={projects.get(projectId as string)?.name as string}>
-      <div className="bg-neutral-3 h-full p-3 flex justify-center items-center gap-4">
-        <div className="basis-1/2 h-full bg-bgDefault rounded-md py-2 px-3 overflow-y-auto hidden-scroll-bar shadow-md">
+    <ProjectLayout projectId={projectId as string}>
+      <div className="bg-neutral-3 grid grid-cols-2 p-2 gap-4 h-subContent">
+        <div className="bg-bgDefault rounded-md py-3 px-4 overflow-y-auto hidden-scroll-bar shadow-md">
           <p className="text-2xl font-semibold">Member</p>
 
           <div className="border border-disabled rounded-md mt-2 px-2 py-1">
@@ -98,14 +99,16 @@ const ProjectOverview = () => {
             <MemberInfo name="Duc Nghia" email="ducnghia@gmail.com" />
           </div>
         </div>
-        <div className="basis-1/2 h-full flex flex-col justify-center items-center gap-4">
-          <div className="w-full rounded-md bg-bgDefault py-2 px-3 shadow-md flex flex-col gap-1 justify-start items-start">
+
+        <div className="">
+          <div className="rounded-md bg-bgDefault py-3 px-4 shadow-md flex flex-col gap-1 justify-start items-start mb-4">
             <p className="text-2xl font-semibold">About project</p>
             <p className="text-xl font-medium">{projects.get(projectId as string)?.name}</p>
-            <p className="max-w-[40vw]">{projects.get(projectId as string)?.description}</p>
+            <p className="text-base">{projects.get(projectId as string)?.description}</p>
           </div>
-          <div className="w-full grow rounded-md bg-bgDefault py-2 px-3 shadow-md">
-            <p className="text-2xl font-semibold mb-4">About project</p>
+
+          <div className="rounded-md bg-bgDefault py-3 px-4 shadow-md">
+            <p className="text-2xl font-semibold mb-4">Overview</p>
             <div className="flex justify-between items-start">
               <div className="flex flex-col justify-start items-start gap-4">
                 {Array.from(board.columns.entries()).map(([id, column]) => {
@@ -117,10 +120,11 @@ const ProjectOverview = () => {
                     reviewing = column.tasks.filter(task => task.projectId === projectId).length
                   if (id === 'completed')
                     completed = column.tasks.filter(task => task.projectId === projectId).length
+                  if (id === 'deleted') return <></>
 
                   return (
                     <EachColumn
-                      key={id}
+                      key={`each-status-${id}`}
                       id={id}
                       tasks={column.tasks.filter(task => task.projectId === projectId)}
                     />
@@ -129,7 +133,9 @@ const ProjectOverview = () => {
               </div>
               <Progress
                 type="circle"
-                percent={(completed / (todo + inprogress + reviewing + completed)) * 100}
+                percent={Math.round(
+                  (completed / (todo + inprogress + reviewing + completed)) * 100
+                )}
               />
             </div>
           </div>

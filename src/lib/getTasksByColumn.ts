@@ -26,7 +26,7 @@ export const getTasksByColumn = async () => {
     return acc
   }, new Map<StatusType, Column>())
 
-  const columnTypes: StatusType[] = ['todo', 'inprogress', 'reviewing', 'completed']
+  const columnTypes: StatusType[] = ['todo', 'inprogress', 'reviewing', 'completed', 'deleted']
 
   columnTypes.forEach((columnType: StatusType) => {
     if (!columns.get(columnType)) {

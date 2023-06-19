@@ -94,8 +94,8 @@ const SideBar = () => {
   return (
     <div
       className={`${
-        isSideBarOpen ? 'w-52' : 'w-min'
-      } flex flex-col justify-between items-start border-r-2 border-borderLine h-full`}
+        isSideBarOpen ? 'min-w-[13rem] max-w-[13rem]' : 'w-min'
+      } flex flex-col justify-between transition-all duration-200 items-start border-r-2 border-borderLine h-full`}
     >
       <div className={`${isSideBarOpen && 'px-2'} gap-2 py-4`}>
         {isSideBarOpen ? (
