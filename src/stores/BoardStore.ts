@@ -138,17 +138,13 @@ const useBoardStore = create<IBoardState>(set => ({
   },
 
   rollBackTaskInDB: async task => {
-    await updateDocument({
-      collectionName: `tasks/${task.id}`,
-      data: { status: 'todo' }
-    })
-
     set(state => {
       const newCols = new Map(state.board.columns)
 
       const newTask = { ...task, status: 'todo', priority: 0 } as TaskType
 
       const todoCol = newCols.get('todo')
+      const deletedCol = newCols.get('deleted')
 
       if (!todoCol) {
         newCols.set('todo', {
@@ -159,13 +155,29 @@ const useBoardStore = create<IBoardState>(set => ({
         newCols.get('todo')?.tasks.unshift(newTask)
       }
 
-      newCols.get('deleted')?.tasks.splice(task.priority, 1)
+      if (!deletedCol) {
+        newCols.set('deleted', {
+          id: 'deleted',
+          tasks: []
+        })
+      } else {
+        const deletedTask = newCols.get('deleted')?.tasks.filter(t => t.id !== task.id)
+        newCols.set('deleted', {
+          id: 'deleted',
+          tasks: deletedTask as TaskType[]
+        })
+      }
 
       return {
         board: {
           columns: newCols
         }
       }
+    })
+
+    await updateDocument({
+      collectionName: `tasks/${task.id}`,
+      data: { status: 'todo' }
     })
   }
 }))

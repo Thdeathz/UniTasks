@@ -124,7 +124,7 @@ const ProjectOverview = () => {
 
                   return (
                     <EachColumn
-                      key={`each-status-${id}`}
+                      key={`each-status-overview-${id}`}
                       id={id}
                       tasks={column.tasks.filter(task => task.projectId === projectId)}
                     />

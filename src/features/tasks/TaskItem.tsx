@@ -18,6 +18,8 @@ import useProjectStore from '~/stores/ProjectStore'
 import ChatBox from '~/components/ChatBox'
 import useBoardStore from '~/stores/BoardStore'
 import { toast } from 'react-toastify'
+import moment from 'moment'
+import { useNavigate } from 'react-router-dom'
 
 type PropsType = {
   title: React.ReactNode
@@ -45,16 +47,15 @@ const UserItem = ({ size, name }: UserItemPropsType) => {
 }
 
 const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
+  const navigate = useNavigate()
+
   const [projects] = useProjectStore(state => [state.projects])
-  const [board, setBoardState, rollBackTaskInDB] = useBoardStore(state => [
-    state.board,
-    state.setBoardState,
-    state.rollBackTaskInDB
-  ])
+  const [rollBackTaskInDB] = useBoardStore(state => [state.rollBackTaskInDB])
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const cardRef = useRef<HTMLDivElement>(null)
   const isHover = useHover(cardRef)
+  const isOutDate = new Date(task.dueDate).valueOf() - new Date().valueOf() < 0
 
   const handleTaskItemClick = () => {
     if (disabled) {
@@ -72,14 +73,18 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
   return (
     <>
       <div
-        className="bg-bgDefault rounded-md shadow cursor-pointer hover:shadow-lg transition-shadow relative"
+        className={`${
+          (task.status === 'todo' || task.status === 'inprogress') && isOutDate
+            ? 'bg-dust-red-2'
+            : 'bg-bgDefault'
+        } rounded-md shadow cursor-pointer hover:shadow-lg transition-shadow relative`}
         onClick={handleTaskItemClick}
         ref={cardRef}
       >
         {showHeader && (
-          <p className="font-medium text-textHover border-b w-full border-disabled px-2 py-1">
+          <div className="font-medium text-textHover border-b w-full border-disabled px-2 py-1">
             {projects?.get(task.projectId)?.name}
-          </p>
+          </div>
         )}
         <div className="flex flex-col justify-start items-start w-full p-2 gap-2">
           <div className="flex justify-between items-center w-full">
@@ -147,7 +152,12 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
             {title}
 
             {showHeader && (
-              <p className="font-medium text-textHover">{projects?.get(task.projectId)?.name}</p>
+              <p
+                className="font-medium text-textHover hover:text-primary-4 transition-colors cursor-pointer"
+                onClick={() => navigate(`/project/${task.projectId}/tasks`)}
+              >
+                {projects?.get(task.projectId)?.name}
+              </p>
             )}
 
             {task?.createdAt && (
@@ -166,7 +176,7 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
             {task?.dueDate && (
               <p className="font-medium text-noneSelected">
                 Due date:{' '}
-                <span className="text-black">
+                <span className={`${isOutDate ? 'text-danger' : 'text-black'}`}>
                   {new Intl.DateTimeFormat('en-GB', {
                     year: 'numeric',
                     month: 'long',

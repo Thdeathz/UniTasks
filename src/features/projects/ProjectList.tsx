@@ -80,22 +80,26 @@ const ProjectItem = ({ project, upcomingTask }: ProjectItemPropsType) => {
         </div>
       </button>
 
-      <StarButton stared={false} />
+      <StarButton projectId={project.id} stared={project.bookmark} />
     </div>
   )
 }
 
 const ProjectList = () => {
+  const navigate = useNavigate()
   const [projects] = useProjectStore(state => [state.projects])
   const [board] = useBoardStore(state => [state.board])
 
   return (
     <HomeLayout>
       <div className="grid grid-cols-4 gap-4 auto-rows-min">
-        <div className="cursor-pointer hover:text-textHover hover:border-textHover transition-colors rounded-2xl h-[28vh] flex flex-col gap-2 justify-center items-center text-noneSelected border border-dashed border-noneSelected">
+        <button
+          className="cursor-pointer hover:text-textHover hover:border-textHover transition-colors rounded-2xl h-[28vh] flex flex-col gap-2 justify-center items-center text-noneSelected border border-dashed border-noneSelected"
+          onClick={() => navigate('/project/create')}
+        >
           <PlusOutlined className="text-3xl flex justify-center items-center" />
           <p className="text-xl font-medium">Create new project</p>
-        </div>
+        </button>
 
         {Array.from(projects.entries()).map(([id, project]) => (
           <ProjectItem

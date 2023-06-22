@@ -61,7 +61,7 @@ const ProjectLayout = ({ children, projectId }: PropsType) => {
               style={
                 isOverviewPage
                   ? {
-                      backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.25)',
                       backgroundImage: `url(${
                         projects.get(projectId as string)?.thumbnail as string
                       })`,

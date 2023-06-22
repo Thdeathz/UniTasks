@@ -7,6 +7,8 @@ import Tag from '~/components/Tag'
 import { v4 } from 'uuid'
 import useBoardStore from '~/stores/BoardStore'
 import { toast } from 'react-toastify'
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 
 type PropsType = {
   projectId: string
@@ -150,7 +152,13 @@ const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
         name="dueDate"
         rules={[{ required: true, message: 'Task due date is required.' }]}
       >
-        <DatePicker format="DD/MM/YYYY" />
+        <DatePicker
+          format="YYYY-MM-DD HH:mm:ss"
+          disabledDate={current => {
+            // Can not select days before today and today
+            return current < dayjs().startOf('day')
+          }}
+        />
       </Form.Item>
 
       <Form.Item label={<p className="text-lg font-semibold">To do:</p>} name="todo">

@@ -1,4 +1,20 @@
 import { getDocument } from '~/firebase/services'
+import { Timestamp } from 'firebase/firestore'
+
+type ReceivedTaskType = {
+  id: string
+  projectId: string
+  tags: TagType[]
+  priority: number
+  title: string
+  description: string
+  assignedUser: string[]
+  dueDate: Timestamp
+  createdAt: Timestamp
+  createdUser?: UserType
+  subTasks: SubTaskType[]
+  status: StatusType
+}
 
 export const getTasksByColumn = async () => {
   const data = await getDocument({
@@ -7,9 +23,9 @@ export const getTasksByColumn = async () => {
 
   if (!data) return
 
-  const returnTasks = (data as TaskType[]).sort((a, b) => a.priority - b.priority)
+  const returnTasks = (data as ReceivedTaskType[]).sort((a, b) => a.priority - b.priority)
 
-  const columns = returnTasks?.reduce((acc: Map<StatusType, Column>, task: TaskType) => {
+  const columns = returnTasks?.reduce((acc: Map<StatusType, Column>, task: ReceivedTaskType) => {
     if (!acc.get(task.status)) {
       acc.set(task.status, {
         id: task.status,

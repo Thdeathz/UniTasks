@@ -34,14 +34,19 @@ type SubMenuItemProps = {
   project: ProjectType
 }
 
+type ProjectMenuProps = {
+  isSideBarOpen: boolean
+}
+
 const SideMenuItem = ({ icon, activedIcon, text, isOpen, path }: SideMenuItemProps) => {
   const navigate = useNavigate()
+  const currentPath = useLocation().pathname
 
   const isActived =
-    useLocation().pathname.slice(1) === path.slice(1) ||
-    (useLocation().pathname === '/' && path === '/') ||
-    (useLocation().pathname.slice(1) === 'calendar' && path === '/') ||
-    (useLocation().pathname.slice(1).includes('project') && path === '/project')
+    currentPath.slice(1) === path.slice(1) ||
+    (currentPath === '/' && path === '/') ||
+    (currentPath.slice(1) === 'calendar' && path === '/') ||
+    (currentPath.slice(1).includes('project') && path === '/project')
 
   return (
     <Tooltip placement="right" title={!isOpen && text} arrow={false}>
@@ -69,7 +74,7 @@ const SubMenuItem = ({ project }: SubMenuItemProps) => {
     <button
       className={`
         ${isActived && 'text-primary-5 border-l-2'}
-        font-medium pl-3 border-l ml-3 pb-1 cursor-pointer text-noneSelected hover:text-borderHover 
+        font-medium pl-3 ml-3 pb-1.5 cursor-pointer text-noneSelected hover:text-borderHover 
       `}
       onClick={() => naivgate(`/project/${project.id}/overview`)}
     >
@@ -78,18 +83,75 @@ const SubMenuItem = ({ project }: SubMenuItemProps) => {
   )
 }
 
-const SideBar = () => {
+const ProjectMenu = ({ isSideBarOpen }: ProjectMenuProps) => {
   const navigate = useNavigate()
-  const [isSideBarOpen, isSubMenuOpen, setIsSideBarOpen, setIsSubMenuOpen] = useBoardStore(
-    state => [
-      state.isSideBarOpen,
-      state.isSubMenuOpen,
-      state.setIsSideBarOpen,
-      state.setIsSubMenuOpen
-    ]
-  )
-
   const [projects] = useProjectStore(state => [state.projects])
+  const [isSubMenuOpen, setIsSubMenuOpen] = useBoardStore(state => [
+    state.isSubMenuOpen,
+    state.setIsSubMenuOpen
+  ])
+
+  const isActived = useLocation().pathname.includes('project')
+
+  return (
+    <div className="w-full">
+      <div className="flex justify-between items-center w-full text-noneSelected relative">
+        <Tooltip placement="right" title={!isSideBarOpen && 'Project'} arrow={false}>
+          <button
+            className={`
+            ${isActived ? 'hover:bg-primary-2 text-primary-5' : 'hover:bg-primary-1'}
+            ${isSideBarOpen ? 'py-2 px-2' : 'py-2 px-4'}
+            ${isSideBarOpen && isActived && 'bg-primary-1'}
+            ${isSubMenuOpen ? 'rounded-t' : 'rounded'}
+            flex w-full justify-between font-medium items-center text-noneSelected transition-colors hover:bg-primary-1`}
+            onClick={() => navigate('/project')}
+          >
+            <div className="flex justify-start items-center gap-2">
+              {isActived ? (
+                <ProjectFilled className="text-xl flex justify-start items-center" />
+              ) : (
+                <ProjectOutlined className="text-xl flex justify-start items-center" />
+              )}
+              <span className={`${!isSideBarOpen && 'hidden'} `}>Project</span>
+            </div>
+          </button>
+        </Tooltip>
+
+        {isSideBarOpen && (
+          <button
+            className="flex justify-center items-center p-1 rounded-full hover:text-primary-4 absolute top-2 right-2"
+            onClick={() => {
+              if (isSideBarOpen) setIsSubMenuOpen(!isSubMenuOpen)
+            }}
+          >
+            {isSubMenuOpen ? <CaretUpOutlined /> : <CaretDownOutlined />}
+          </button>
+        )}
+      </div>
+
+      {isSideBarOpen && isSubMenuOpen && (
+        <div
+          className={`${
+            isActived && 'bg-primary-1'
+          } flex flex-col justify-start items-start rounded-b pb-1`}
+        >
+          <>
+            {Array.from(projects.entries()).map(([id, project], index) => {
+              if (project.bookmark)
+                return <SubMenuItem key={`each-project-${index}`} project={project} />
+            })}
+          </>
+        </div>
+      )}
+    </div>
+  )
+}
+
+const SideBar = () => {
+  const [isSideBarOpen, setIsSideBarOpen] = useBoardStore(state => [
+    state.isSideBarOpen,
+    state.setIsSideBarOpen
+  ])
 
   return (
     <div
@@ -113,55 +175,7 @@ const SideBar = () => {
             path="/"
           />
 
-          <SideMenuItem
-            isOpen={isSideBarOpen}
-            icon={<ProjectOutlined className="text-xl flex justify-start items-center" />}
-            activedIcon={<ProjectFilled className="text-xl flex justify-start items-center" />}
-            text="Projects"
-            path="/project"
-          />
-
-          {/* <div className="w-full">
-            <div className="flex justify-between items-center w-full text-noneSelected">
-              <Tooltip placement="right" title={!isSideBarOpen && 'Project'} arrow={false}>
-                <button
-                  className={`
-                ${isSideBarOpen ? 'py-2 px-2' : 'py-2 px-4'}
-                flex w-full justify-between font-medium items-center text-noneSelected rounded transition-colors hover:bg-primary-1`}
-                  onClick={() => {
-                    if (isSideBarOpen) setIsSubMenuOpen(!isSubMenuOpen)
-                  }}
-                >
-                  <div className="flex justify-start items-center gap-2">
-                    <ProjectOutlined className="text-xl flex justify-start items-center" />
-                    <span className={`${!isSideBarOpen && 'hidden'} `}>Project</span>
-                  </div>
-
-                  {isSideBarOpen ? (
-                    isSubMenuOpen ? (
-                      <CaretUpOutlined />
-                    ) : (
-                      <CaretDownOutlined />
-                    )
-                  ) : (
-                    <></>
-                  )}
-                </button>
-              </Tooltip>
-            </div>
-
-            {isSideBarOpen && isSubMenuOpen && (
-              <div className="flex w-full">
-                <div className="flex flex-col justify-start items-start">
-                  <>
-                    {Array.from(projects.entries()).map(([id, project], index) => (
-                      <SubMenuItem key={`each-project-${index}`} project={project} />
-                    ))}
-                  </>
-                </div>
-              </div>
-            )}
-          </div> */}
+          <ProjectMenu isSideBarOpen={isSideBarOpen} />
 
           <Divider className="m-0" />
 

@@ -36,8 +36,8 @@ type TaskType = {
   title: string
   description: string
   assignedUser: string[]
-  dueDate: Timestamp
-  createdAt?: Timestamp
+  dueDate: Date
+  createdAt?: Date
   createdUser?: UserType
   subTasks: SubTaskType[]
   status: StatusType
@@ -48,6 +48,7 @@ type ProjectType = {
   name: string
   description: string
   thumbnail: string
+  bookmark: boolean
 }
 
 type UserCredential = {
@@ -56,3 +57,5 @@ type UserCredential = {
   displayName: string
   avatar?: string
 }
+
+type FilePreview = File & { preview: string }
