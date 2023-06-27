@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import ProjectLayout from '~/components/Layouts/ProjectLayout'
 import useBoardStore from '~/stores/BoardStore'
 import useProjectStore from '~/stores/ProjectStore'
+import useCredentialStore from '~/stores/CredentialStore'
 
 type EachColumnPropsType = {
   id: StatusType
@@ -12,8 +13,7 @@ type EachColumnPropsType = {
 }
 
 type MemberInfoPropsType = {
-  name: string
-  email: string
+  user: UserCredential
 }
 
 const columnTitle: {
@@ -26,17 +26,25 @@ const columnTitle: {
   deleted: 'DELETED'
 }
 
-const MemberInfo = ({ name, email }: MemberInfoPropsType) => {
-  return (
-    <div className="flex justify-center items-center gap-2">
-      <Avatar className="flex justify-center items-center" size={36} icon={<UserOutlined />} />
+const MemberInfo = ({ user }: MemberInfoPropsType) => {
+  if (user)
+    return (
+      <div className="flex justify-center items-center gap-2">
+        <Avatar
+          src={user.avatar ?? null}
+          className="flex justify-center items-center"
+          size={36}
+          icon={<UserOutlined />}
+        />
 
-      <div className="flex flex-col justify-start items-start">
-        <p className="font-semibold text-lg">{name}</p>
-        <p className="text-noneSelected">{email}</p>
+        <div className="flex flex-col justify-start items-start">
+          <p className="font-semibold">{user.displayName}</p>
+          <p className="text-noneSelected">{user.email}</p>
+        </div>
       </div>
-    </div>
-  )
+    )
+
+  return <></>
 }
 
 const EachColumn = ({ id, tasks }: EachColumnPropsType) => {
@@ -73,6 +81,7 @@ const ProjectOverview = () => {
   const { projectId } = useParams()
   const [board] = useBoardStore(state => [state.board])
   const [projects] = useProjectStore(state => [state.projects])
+  const [users] = useCredentialStore(state => [state.users])
 
   let todo = 0
   let inprogress = 0
@@ -92,11 +101,12 @@ const ProjectOverview = () => {
             />
           </div>
           <div className="flex flex-col justify-start items-start gap-2 mt-2">
-            <MemberInfo name="Bui Dung (you)" email="buidung@gmail.com" />
-            <MemberInfo name="Tran Huy" email="tranhuy@gmail.com" />
-            <MemberInfo name="Tien Loc" email="tienloc@gmail.com" />
-            <MemberInfo name="Duc Luong" email="ducluong@gmail.com" />
-            <MemberInfo name="Duc Nghia" email="ducnghia@gmail.com" />
+            {projects.get(projectId as string)?.members.map((uid, index) => (
+              <MemberInfo
+                key={`asd-members-list-${uid}-${index}`}
+                user={users.get(uid) as UserCredential}
+              />
+            ))}
           </div>
         </div>
 

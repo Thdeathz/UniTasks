@@ -6,19 +6,20 @@ import NewTag from '~/components/NewTag'
 import Tag from '~/components/Tag'
 import { v4 } from 'uuid'
 import useBoardStore from '~/stores/BoardStore'
+import useCredentialStore from '~/stores/CredentialStore'
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
-import customParseFormat from 'dayjs/plugin/customParseFormat'
+import useProjectStore from '~/stores/ProjectStore'
 
 type PropsType = {
   projectId: string
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const OPTIONS = ['Bui Dung', 'Tran Huy', 'Duc Luong', 'Tien Loc', 'Duc Nghia']
-
 const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
   const [addNewTaskInDB] = useBoardStore(state => [state.addNewTaskInDB])
+  const [credential, users] = useCredentialStore(state => [state.credential, state.users])
+  const [projects] = useProjectStore(state => [state.projects])
 
   const [form] = Form.useForm()
   const [tagsList, setTagsList] = useState<TagType[]>([])
@@ -44,10 +45,7 @@ const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
         description: values.description,
         assignedUser: values.assignedUser,
         dueDate: new Date(values.dueDate),
-        createdUser: {
-          id: '1',
-          name: 'Bui Dung'
-        },
+        createdUser: credential.uid,
         tags: tagsList,
         status: 'todo',
         priority: -1,
@@ -138,12 +136,14 @@ const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
         <Select
           mode="multiple"
           placeholder="Enter user name..."
-          value={OPTIONS}
           style={{ width: '100%' }}
-          options={OPTIONS.map(item => ({
-            value: item,
-            label: item
-          }))}
+          options={Array.from(projects.get(projectId)?.members as string[]).map(memberId => {
+            const user = users.get(memberId) as UserCredential
+            return {
+              value: user.uid,
+              label: user.displayName
+            }
+          })}
         />
       </Form.Item>
 
@@ -155,7 +155,6 @@ const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
         <DatePicker
           format="YYYY-MM-DD HH:mm:ss"
           disabledDate={current => {
-            // Can not select days before today and today
             return current < dayjs().startOf('day')
           }}
         />

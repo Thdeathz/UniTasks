@@ -11,15 +11,18 @@ type ReceivedTaskType = {
   assignedUser: string[]
   dueDate: Timestamp
   createdAt: Timestamp
-  createdUser?: UserType
+  createdUser?: string
   subTasks: SubTaskType[]
   status: StatusType
 }
 
 export const getTasksByColumn = async () => {
-  const data = await getDocument({
-    collectionName: 'tasks'
-  })
+  const data = await getDocument(
+    {
+      collectionName: 'tasks'
+    },
+    { fieldName: 'status', operator: '!=', compareValue: 'deleted' }
+  )
 
   if (!data) return
 

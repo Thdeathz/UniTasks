@@ -1,4 +1,6 @@
 import { Routes, Route, Outlet } from 'react-router-dom'
+import { getFirestore } from 'firebase/firestore'
+import { FirestoreProvider, useFirebaseApp } from 'reactfire'
 import Tasks from './features/tasks/Tasks'
 import CreateProject from './features/projects/CreateProject'
 import MyTasks from './features/tasks/MyTasks'
@@ -15,6 +17,8 @@ import Trash from './features/tasks/Trash'
 import Account from './features/auth/Account'
 
 function App() {
+  const firestoreInstance = getFirestore(useFirebaseApp())
+
   return (
     <Routes>
       <Route path="/" element={<Outlet />}>
@@ -25,27 +29,83 @@ function App() {
           </Route>
 
           <Route element={<Prefetch />}>
-            <Route index element={<MyTasks />} />
+            <Route
+              index
+              element={
+                <FirestoreProvider sdk={firestoreInstance}>
+                  <MyTasks />
+                </FirestoreProvider>
+              }
+            />
 
-            <Route path="calendar" element={<MyCalendar />} />
+            <Route
+              path="calendar"
+              element={
+                <FirestoreProvider sdk={firestoreInstance}>
+                  <MyCalendar />
+                </FirestoreProvider>
+              }
+            />
 
-            <Route path="account" element={<Account />} />
+            <Route
+              path="account"
+              element={
+                <FirestoreProvider sdk={firestoreInstance}>
+                  <Account />
+                </FirestoreProvider>
+              }
+            />
 
             <Route path="project">
-              <Route index element={<ProjectList />} />
+              <Route
+                index
+                element={
+                  <FirestoreProvider sdk={firestoreInstance}>
+                    <ProjectList />
+                  </FirestoreProvider>
+                }
+              />
 
               <Route path=":projectId">
-                <Route path="tasks" element={<Tasks />} />
+                <Route
+                  path="tasks"
+                  element={
+                    <FirestoreProvider sdk={firestoreInstance}>
+                      <Tasks />
+                    </FirestoreProvider>
+                  }
+                />
 
-                <Route path="overview" element={<ProjectOverview />} />
+                <Route
+                  path="overview"
+                  element={
+                    <FirestoreProvider sdk={firestoreInstance}>
+                      <ProjectOverview />
+                    </FirestoreProvider>
+                  }
+                />
 
-                <Route path="calendar" element={<ProjectCalendar />} />
+                <Route
+                  path="calendar"
+                  element={
+                    <FirestoreProvider sdk={firestoreInstance}>
+                      <ProjectCalendar />
+                    </FirestoreProvider>
+                  }
+                />
               </Route>
 
               <Route path="create" element={<CreateProject />} />
             </Route>
 
-            <Route path="trash" element={<Trash />} />
+            <Route
+              path="trash"
+              element={
+                <FirestoreProvider sdk={firestoreInstance}>
+                  <Trash />
+                </FirestoreProvider>
+              }
+            />
           </Route>
         </Route>
       </Route>

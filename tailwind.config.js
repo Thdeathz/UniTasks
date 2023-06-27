@@ -41,7 +41,11 @@ export default {
       'dust-red-3': '#FFA39E',
       'dust-red-5': '#FF4D4F',
       'gold-4': '#FFD666',
-      'gold-5': '#FFC53D'
+      'gold-5': '#FFC53D',
+      'polar-green-1': '#F6FFED',
+      'polar-green-2': '#D9F7BE',
+      'polar-green-3': '#B7EB8F',
+      'polar-green-5': '#73D13D'
     }
   },
   plugins: [],

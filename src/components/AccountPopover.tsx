@@ -25,21 +25,13 @@ const PopoverItem = ({ children, onClick }: PopoverItemPropsType) => {
 
 const AccountPopover = () => {
   const navigate = useNavigate()
-  const [credential, setCredential] = useCredentialStore(state => [
-    state.credential,
-    state.setCredential
-  ])
+  const [credential, sendLogout] = useCredentialStore(state => [state.credential, state.sendLogout])
 
   const handleLogout = () => {
     console.log('logout')
     try {
       signOut(auth).then(() => {
-        setCredential({
-          uid: '',
-          email: '',
-          displayName: '',
-          avatar: ''
-        })
+        sendLogout()
         navigate('/login')
         toast.success('Logout successfully', {
           toastId: 'logout-success'
@@ -52,7 +44,7 @@ const AccountPopover = () => {
 
   return (
     <Popover
-      placement="bottom"
+      placement="bottomRight"
       trigger="click"
       arrow={false}
       content={
@@ -71,14 +63,15 @@ const AccountPopover = () => {
         </div>
       }
     >
-      <Tooltip placement="bottom" title="Account" arrow={false}>
+      <Tooltip placement="top" title="Account" arrow={false}>
         <button className="flex justify-center items-center h-full gap-2 bg-primary-2 py-1 px-2 rounded-md font-medium hover:bg-primary-3 transition-colors">
           <Avatar
             className="flex justify-center items-center cursor-pointer"
             size={26}
             icon={<UserOutlined />}
-            src={credential.avatar}
+            src={credential.avatar ?? null}
           />
+
           <span>{credential.displayName}</span>
         </button>
       </Tooltip>

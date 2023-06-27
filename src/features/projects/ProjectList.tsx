@@ -1,11 +1,12 @@
 import React from 'react'
-import { PlusOutlined, StarOutlined } from '@ant-design/icons'
+import { PlusOutlined, StarOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar } from 'antd'
 import HomeLayout from '~/components/Layouts/HomeLayout'
 import useProjectStore from '~/stores/ProjectStore'
 import { useNavigate } from 'react-router-dom'
 import useBoardStore from '~/stores/BoardStore'
 import StarButton from '~/components/StarButton'
+import useCredentialStore from '~/stores/CredentialStore'
 
 type ProjectItemPropsType = {
   project: ProjectType
@@ -14,6 +15,7 @@ type ProjectItemPropsType = {
 
 const ProjectItem = ({ project, upcomingTask }: ProjectItemPropsType) => {
   const navigate = useNavigate()
+  const [users] = useCredentialStore(state => [state.users])
 
   return (
     <div className="relative">
@@ -43,39 +45,25 @@ const ProjectItem = ({ project, upcomingTask }: ProjectItemPropsType) => {
           <Avatar.Group
             maxCount={3}
             maxPopoverTrigger="click"
-            maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf', cursor: 'pointer' }}
+            maxStyle={{
+              color: '#f56a00',
+              backgroundColor: '#fde3cf',
+              cursor: 'pointer',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              fontSize: '0.75rem'
+            }}
             size={28}
           >
-            <Avatar
-              className="flex justify-center items-center text-sm"
-              style={{ backgroundColor: '#f56a00' }}
-            >
-              BD
-            </Avatar>
-            <Avatar
-              className="flex justify-center items-center text-sm"
-              style={{ backgroundColor: '#f56a00' }}
-            >
-              TL
-            </Avatar>
-            <Avatar
-              className="flex justify-center items-center text-sm"
-              style={{ backgroundColor: '#f56a00' }}
-            >
-              TH
-            </Avatar>
-            <Avatar
-              className="flex justify-center items-center text-sm"
-              style={{ backgroundColor: '#f56a00' }}
-            >
-              DN
-            </Avatar>
-            <Avatar
-              className="flex justify-center items-center text-sm"
-              style={{ backgroundColor: '#f56a00' }}
-            >
-              DL
-            </Avatar>
+            {project.members.map(member => (
+              <Avatar
+                src={users.get(member)?.avatar ?? null}
+                className="flex justify-center items-center text-sm"
+                style={{ backgroundColor: '#f56a00' }}
+                icon={<UserOutlined />}
+              />
+            ))}
           </Avatar.Group>
         </div>
       </button>

@@ -11,6 +11,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import AccountPopover from './AccountPopover'
 import useBoardStore from '~/stores/BoardStore'
+import Notifications from './Notifications'
 
 type NavItemProps = {
   icon: React.ReactNode
@@ -117,9 +118,7 @@ const NavBar = () => {
           />
         </div>
 
-        <Tooltip placement="bottom" title="Notifications" arrow={false}>
-          <BellOutlined className="text-2xl flex justify-center items-center text-noneSelected cursor-pointer hover:text-textHover transition-colors" />
-        </Tooltip>
+        <Notifications />
 
         <AccountPopover />
       </div>

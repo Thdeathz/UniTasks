@@ -1,6 +1,14 @@
-import React, { useState } from 'react'
-import { DeleteOutlined, InboxOutlined, LoadingOutlined, UserOutlined } from '@ant-design/icons'
-import { Avatar, Button, Form, Input } from 'antd'
+import React, { useEffect, useState } from 'react'
+import {
+  CheckOutlined,
+  DeleteOutlined,
+  InboxOutlined,
+  LoadingOutlined,
+  SendOutlined,
+  UserAddOutlined,
+  UserOutlined
+} from '@ant-design/icons'
+import { Avatar, Button, Form, Input, Tooltip } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { v4 } from 'uuid'
 import { addDocument } from '~/firebase/services'
@@ -11,20 +19,34 @@ import AccountPopover from '~/components/AccountPopover'
 import { motion } from 'framer-motion'
 import UploadThumbnail from './UploadThumbnail'
 import uploadFile from '~/hooks/uploadFile'
+import useCredentialStore from '~/stores/CredentialStore'
 
 type StepHeaderPropsType = {
   currentStep: number
 }
 
+type MemberItemPropsType = {
+  user: UserCredential
+  setAddedMemberList: React.Dispatch<React.SetStateAction<string[]>>
+}
+
 const variants = {
-  hidden: { opacity: 0, x: 0, y: 10 },
+  hidden: { opacity: 0, y: 10 },
   enter: {
     opacity: 1,
-    x: 0,
     y: 0,
     transition: { duration: 0.6, type: 'easeOut', when: 'beforeChildren' }
   },
-  exit: { opacity: 0, x: -0, y: -10 }
+  exit: { opacity: 0, y: -10 }
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -10 },
+  enter: {
+    opacity: 1,
+    x: 0,
+    staggerChildren: 0.2
+  }
 }
 
 const StepHeader = ({ currentStep }: StepHeaderPropsType) => {
@@ -46,11 +68,47 @@ const StepHeader = ({ currentStep }: StepHeaderPropsType) => {
   if (currentStep === 3)
     return (
       <div className="flex flex-col gap-3 mb-3">
-        <p className="text-3xl font-bold">Find your temmate</p>
+        <p className="text-3xl font-bold">Find your teammate</p>
       </div>
     )
 
   return <></>
+}
+
+const MemberItem = ({ user, setAddedMemberList }: MemberItemPropsType) => {
+  const handleSendInvite = () => {
+    setAddedMemberList(prev => [...prev, user.uid])
+  }
+
+  return (
+    <motion.div
+      className={`flex justify-between items-center w-full rounded-md px-2`}
+      variants={itemVariants}
+      initial="hidden"
+      animate="enter"
+    >
+      <div className="flex justify-center items-center gap-2">
+        <Avatar
+          src={user.avatar ?? null}
+          className="flex justify-center items-center"
+          size={36}
+          icon={<UserOutlined />}
+        />
+
+        <div className="flex flex-col justify-start items-start">
+          <p className="font-semibold text-lg">{user.displayName}</p>
+          <p className="text-noneSelected">{user.email}</p>
+        </div>
+      </div>
+
+      <Tooltip placement="top" title="Add user" arrow={false}>
+        <UserAddOutlined
+          className="flex justify-center items-center text-2xl cursor-pointer hover:scale-125 transition-transform hover:text-primary-4"
+          onClick={handleSendInvite}
+        />
+      </Tooltip>
+    </motion.div>
+  )
 }
 
 const CreateProject = () => {
@@ -58,10 +116,18 @@ const CreateProject = () => {
   const navigate = useNavigate()
   const values = Form.useWatch([], form)
 
-  const [getProjects] = useProjectStore(state => [state.getProjects])
+  const [credential] = useCredentialStore(state => [state.credential])
+  const [createProject] = useProjectStore(state => [state.createProject])
+  const [users, searchUserResult, searchUser] = useCredentialStore(state => [
+    state.users,
+    state.searchUserResult,
+    state.searchUser
+  ])
+
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [projectThumbnail, setProjectThumbnail] = useState<FilePreview | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [addedMemberList, setAddedMemberList] = useState<string[]>([credential.uid])
 
   const handleNextStep = () => {
     if (currentStep === 1 && values.name) {
@@ -87,17 +153,17 @@ const CreateProject = () => {
 
     uploadFile(projectThumbnail)
       .then(async res => {
-        await addDocument({
-          collectionName: 'projects',
-          id,
-          data: {
+        createProject(
+          {
+            id,
             name,
             description,
             thumbnail: res,
-            bookmark: true
-          }
-        })
-        getProjects()
+            bookmark: true,
+            members: [credential.uid]
+          },
+          addedMemberList.filter(uid => uid !== credential.uid)
+        )
 
         form.resetFields()
         navigate(`/project/${id}/tasks`)
@@ -120,6 +186,7 @@ const CreateProject = () => {
           } ${currentStep === 2 && 'w-2/3'} ${currentStep === 3 && 'w-full'}`}
         ></div>
       </div>
+
       <motion.div
         className="grow w-full flex justify-center items-start mt-8"
         variants={variants}
@@ -162,12 +229,15 @@ const CreateProject = () => {
               <>
                 <div className="border border-disabled rounded-md px-2 py-1">
                   <input
+                    autoComplete="off"
                     className="outline-none border-none w-full"
                     placeholder="Find member by email..."
+                    onChange={e => searchUser(e.target.value)}
                   />
                 </div>
+
                 <div className="flex flex-col justify-start items-start gap-1 mt-2">
-                  <div className="flex justify-between items-center w-full">
+                  <div className="flex justify-between items-center w-full rounded-md px-2">
                     <div className="flex justify-center items-center gap-2">
                       <Avatar
                         className="flex justify-center items-center"
@@ -176,13 +246,49 @@ const CreateProject = () => {
                       />
 
                       <div className="flex flex-col justify-start items-start">
-                        <p className="font-semibold text-lg">Bui Dung (you)</p>
-                        <p className="text-noneSelected">buidung@gmail.com</p>
+                        <p className="font-semibold text-lg">{credential.displayName} (You)</p>
+                        <p className="text-noneSelected">{credential.email}</p>
                       </div>
                     </div>
-
-                    <DeleteOutlined className="text-2xl cursor-pointer text-danger hover:scale-125 transition-transform" />
                   </div>
+
+                  {Array.from(addedMemberList)
+                    .filter(each => each != credential.uid)
+                    .map(each => {
+                      const user = users.get(each)
+                      if (user)
+                        return (
+                          <div
+                            className={`flex justify-between items-center w-full rounded-md px-2 bg-polar-green-2`}
+                          >
+                            <div className="flex justify-center items-center gap-2">
+                              <Avatar
+                                src={user.avatar ?? null}
+                                className="flex justify-center items-center"
+                                size={36}
+                                icon={<UserOutlined />}
+                              />
+
+                              <div className="flex flex-col justify-start items-start">
+                                <p className="font-semibold text-lg">{user.displayName}</p>
+                                <p className="text-noneSelected">{user.email}</p>
+                              </div>
+                            </div>
+
+                            <CheckOutlined className="flex justify-center items-center text-2xl text-polar-green-5" />
+                          </div>
+                        )
+                    })}
+
+                  {Array.from(searchUserResult)
+                    .filter(each => !addedMemberList.includes(each.uid))
+                    .map(user => (
+                      <MemberItem
+                        key={`search-list-${user.uid}`}
+                        user={user}
+                        setAddedMemberList={setAddedMemberList}
+                      />
+                    ))}
                 </div>
               </>
             </Form.Item>

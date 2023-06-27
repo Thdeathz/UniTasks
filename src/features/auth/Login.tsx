@@ -22,7 +22,7 @@ const EMAIL_REGEX = new RegExp(/^\S+@\S+\.\S+$/)
 const Login = () => {
   const navigate = useNavigate()
   const [form] = Form.useForm()
-  const [setCredential] = useCredentialStore(state => [state.setCredential])
+  const [setPersistedCredential] = useCredentialStore(state => [state.setPersistedCredential])
   const [isloading, setIsLoading] = useState<boolean>(false)
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false)
 
@@ -33,7 +33,7 @@ const Login = () => {
       .then(userCredential => {
         // Signed in
         const user = userCredential.user
-        setCredential({
+        setPersistedCredential({
           uid: user.uid,
           email: user.email as string,
           displayName: user.displayName as string,
@@ -47,7 +47,6 @@ const Login = () => {
       })
       .catch(error => {
         const receivedError = error as { code: string; message: string }
-        console.log('==> error code', receivedError.code)
         if (receivedError.code === 'auth/too-many-requests') {
           form.setFields([
             {

@@ -1,18 +1,21 @@
 import { create } from 'zustand'
-import { updateDocument } from '~/firebase/services'
+import { addDocument, deleteDocument, updateDocument } from '~/firebase/services'
 import { getAllProjects } from '~/lib/getAllProject'
+import { arrayUnion } from 'firebase/firestore'
 
 interface IProjectState {
   projects: Project
-  getProjects: () => void
+  getProjects: (currentUserUid: string) => void
   bookmarkProject: (projectId: string, status: boolean) => void
+  createProject: (project: ProjectType, inviteList: string[]) => void
+  joinProject: (project: ProjectType, currentUserUid: string, notificationId: string) => void
 }
 
-const useProjectStore = create<IProjectState>(set => ({
+const useProjectStore = create<IProjectState>((set, get) => ({
   projects: new Map<string, ProjectType>(),
 
-  getProjects: async () => {
-    const projects = await getAllProjects()
+  getProjects: async currentUserUid => {
+    const projects = await getAllProjects(currentUserUid)
 
     set({ projects })
   },
@@ -34,6 +37,67 @@ const useProjectStore = create<IProjectState>(set => ({
       collectionName: `projects/${projectId}`,
       data: { bookmark: status }
     })
+  },
+
+  createProject: async (project, inviteList) => {
+    const { id, name, description, thumbnail, members } = project
+
+    await addDocument({
+      collectionName: 'projects',
+      id,
+      data: {
+        name,
+        description,
+        thumbnail,
+        bookmark: true,
+        members
+      }
+    })
+
+    inviteList.forEach(async member => {
+      await addDocument({
+        collectionName: 'notifications',
+        data: {
+          receiver: member,
+          type: 'project-invite',
+          project: {
+            id,
+            name,
+            description,
+            thumbnail,
+            members
+          }
+        }
+      })
+    })
+
+    set(state => {
+      const newProjects = state.projects
+      newProjects.set(id, project)
+
+      return {
+        projects: newProjects
+      }
+    })
+  },
+
+  joinProject: async (project, currentUserUid, notificationId) => {
+    const { id, members } = project
+
+    await updateDocument({
+      collectionName: `projects/${id}`,
+      data: {
+        members: arrayUnion(currentUserUid)
+      }
+    })
+
+    await deleteDocument({
+      collectionName: `notifications/${notificationId}`
+    })
+
+    const projects = await getAllProjects(currentUserUid)
+
+    set({ projects })
   }
 }))
 

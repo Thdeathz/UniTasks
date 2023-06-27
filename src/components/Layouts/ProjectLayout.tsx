@@ -1,7 +1,7 @@
 import React from 'react'
 import DefaultLayout from './DefaultLayout'
 import { Avatar, Breadcrumb, Button } from 'antd'
-import { EditOutlined, ShareAltOutlined } from '@ant-design/icons'
+import { EditOutlined, ShareAltOutlined, UserOutlined } from '@ant-design/icons'
 import { useLocation } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import projectThumbnail from '~/assets/project_thumbnail_demo.png'
@@ -9,6 +9,7 @@ import useProjectStore from '~/stores/ProjectStore'
 import { AnimatePresence, motion } from 'framer-motion'
 import SideBar from '../SideBar'
 import NavBar from '../NavBar'
+import useCredentialStore from '~/stores/CredentialStore'
 
 type PropsType = {
   children: React.ReactNode
@@ -29,6 +30,7 @@ const variants = {
 const ProjectLayout = ({ children, projectId }: PropsType) => {
   const path = useLocation().pathname
   const [projects] = useProjectStore(state => [state.projects])
+  const [users] = useCredentialStore(state => [state.users])
 
   const isOverviewPage = path.includes('overview')
   const isTasksPage = path.includes('tasks')
@@ -101,11 +103,14 @@ const ProjectLayout = ({ children, projectId }: PropsType) => {
                           cursor: 'pointer'
                         }}
                       >
-                        <Avatar style={{ backgroundColor: '#f56a00' }}>BD</Avatar>
-                        <Avatar style={{ backgroundColor: '#f56a00' }}>TL</Avatar>
-                        <Avatar style={{ backgroundColor: '#f56a00' }}>TH</Avatar>
-                        <Avatar style={{ backgroundColor: '#f56a00' }}>DN</Avatar>
-                        <Avatar style={{ backgroundColor: '#f56a00' }}>DL</Avatar>
+                        {projects.get(projectId as string)?.members.map(member => (
+                          <Avatar
+                            src={users.get(member)?.avatar ?? null}
+                            className="flex justify-center items-center text-sm"
+                            style={{ backgroundColor: '#f56a00' }}
+                            icon={<UserOutlined />}
+                          />
+                        ))}
                       </Avatar.Group>
 
                       <div className="flex justify-center items-center gap-2">

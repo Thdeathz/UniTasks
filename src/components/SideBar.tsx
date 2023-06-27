@@ -74,7 +74,7 @@ const SubMenuItem = ({ project }: SubMenuItemProps) => {
     <button
       className={`
         ${isActived && 'text-primary-5 border-l-2'}
-        font-medium pl-3 ml-3 pb-1.5 cursor-pointer text-noneSelected hover:text-borderHover 
+        font-medium pl-3 ml-3 pb-1.5 cursor-pointer text-noneSelected hover:text-borderHover truncate
       `}
       onClick={() => naivgate(`/project/${project.id}/overview`)}
     >

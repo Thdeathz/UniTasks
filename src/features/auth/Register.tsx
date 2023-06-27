@@ -9,6 +9,7 @@ import { auth } from '~/firebase/config'
 import useCredentialStore from '~/stores/CredentialStore'
 import { toast } from 'react-toastify'
 import { LoadingOutlined, LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons'
+import { storeUserInfo } from '~/lib/auth'
 
 type CredentialType = {
   fullname: string
@@ -31,20 +32,21 @@ const Register = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         const user = userCredential.user
-        const { uid, email, displayName, photoURL } = user
+        const { uid, email, photoURL } = user
 
         if (!auth.currentUser) return
 
         updateProfile(auth.currentUser, {
           displayName: fullname
         })
-          .then(() => {
+          .then(async () => {
             setCredential({
               uid,
               email: email as string,
               displayName: fullname,
               avatar: photoURL as string
             })
+
             form.resetFields()
             toast.success('Create new account successfully!', {
               toastId: 'register-success'

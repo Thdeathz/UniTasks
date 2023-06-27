@@ -3,6 +3,7 @@ import { DragDropContext, OnDragEndResponder } from 'react-beautiful-dnd'
 import useBoardStore from '~/stores/BoardStore'
 import EachColumn from './EachColumn'
 import DefaultLayout from '~/components/Layouts/DefaultLayout'
+import useCredentialStore from '~/stores/CredentialStore'
 
 const MyTasks = () => {
   const [board, setBoardState, updateTaskStatusInDB, updatePriorityInDB] = useBoardStore(state => [
@@ -11,6 +12,7 @@ const MyTasks = () => {
     state.updateTaskStatusInDB,
     state.updatePriorityInDB
   ])
+  const [credential] = useCredentialStore(state => [state.credential])
 
   const handleOnDragEnd: OnDragEndResponder = async result => {
     const { source, destination } = result
@@ -72,7 +74,7 @@ const MyTasks = () => {
                   index={index}
                   key={id}
                   id={id}
-                  tasks={column.tasks.filter(each => each.assignedUser.includes('Bui Dung'))}
+                  tasks={column.tasks.filter(each => each.assignedUser.includes(credential.uid))}
                   showHeader={true}
                 />
               )

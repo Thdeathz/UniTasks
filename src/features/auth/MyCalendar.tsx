@@ -3,13 +3,15 @@ import DefaultLayout from '~/components/Layouts/DefaultLayout'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import useBoardStore from '~/stores/BoardStore'
+import useCredentialStore from '~/stores/CredentialStore'
 
 const MyCalendar = () => {
   const [board, isSideBarOpen] = useBoardStore(state => [state.board, state.isSideBarOpen])
+  const [credential] = useCredentialStore(state => [state.credential])
 
   const columns = Array.from(board.columns.entries()).map(([id, column]) =>
     column.tasks
-      .filter(each => each.assignedUser.includes('Bui Dung'))
+      .filter(each => each.assignedUser.includes(credential.uid))
       .map(task => ({
         title: task.title,
         date: task.dueDate // Extracting the date part from the dueDate

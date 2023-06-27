@@ -20,6 +20,7 @@ import useBoardStore from '~/stores/BoardStore'
 import { toast } from 'react-toastify'
 import moment from 'moment'
 import { useNavigate } from 'react-router-dom'
+import useCredentialStore from '~/stores/CredentialStore'
 
 type PropsType = {
   title: React.ReactNode
@@ -30,20 +31,26 @@ type PropsType = {
 
 type UserItemPropsType = {
   size: 'large' | 'small'
-  name: string
+  user: UserCredential | undefined
 }
 
-const UserItem = ({ size, name }: UserItemPropsType) => {
-  return (
-    <div className="flex justify-start items-center gap-1">
-      <Avatar
-        className="flex justify-center items-center"
-        size={size === 'large' ? 24 : 20}
-        icon={<UserOutlined />}
-      />
-      <span className={size === 'large' ? 'font-normal text-base' : 'text-sm'}>{name}</span>
-    </div>
-  )
+const UserItem = ({ size, user }: UserItemPropsType) => {
+  if (user)
+    return (
+      <div className="flex justify-start items-center gap-1">
+        <Avatar
+          className="flex justify-center items-center"
+          src={user.avatar ?? null}
+          size={size === 'large' ? 24 : 20}
+          icon={<UserOutlined className={`${size === 'small' && 'text-xm'}`} />}
+        />
+        <span className={size === 'large' ? 'font-normal text-base' : 'text-sm'}>
+          {user.displayName}
+        </span>
+      </div>
+    )
+
+  return <></>
 }
 
 const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
@@ -51,6 +58,7 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
 
   const [projects] = useProjectStore(state => [state.projects])
   const [rollBackTaskInDB] = useBoardStore(state => [state.rollBackTaskInDB])
+  const [users] = useCredentialStore(state => [state.users])
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -106,8 +114,8 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
           <p className="font-semibold text-lg">{task.title}</p>
 
           <div className="flex justify-start items-center gap-2">
-            {task.assignedUser?.slice(0, 2)?.map((user, index) => (
-              <UserItem key={`assigned-user-${index}`} size="small" name={user as string} />
+            {task.assignedUser?.slice(0, 2)?.map((uid, index) => (
+              <UserItem key={`assigned-user-${uid}-${index}`} size="small" user={users.get(uid)} />
             ))}
             {task.assignedUser.length > 2 && (
               <span className="border-dashed border border-disabled rounded-full text-sm font-medium text-noneSelected w-[24px] h-[24px] flex justify-center items-center">
@@ -221,15 +229,15 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
             <div className="w-full">
               <p className="text-lg font-semibold mb-1">Created by:</p>
 
-              <UserItem size="large" name={task.createdUser?.name as string} />
+              {task.createdUser && <UserItem size="large" user={users.get(task.createdUser)} />}
             </div>
 
             <div className="w-full">
               <p className="text-lg font-semibold mb-1">Assigned to:</p>
 
               <div className="flex justify-start items-center gap-3">
-                {task.assignedUser?.map((user, index) => (
-                  <UserItem key={`assigned-user-${index}`} size="large" name={user as string} />
+                {task.assignedUser?.map((uid, index) => (
+                  <UserItem key={`assigned-user-${index}`} size="large" user={users.get(uid)} />
                 ))}
 
                 <Tooltip placement="bottom" title="New user" arrow={false}>

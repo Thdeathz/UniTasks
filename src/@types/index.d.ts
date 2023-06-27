@@ -38,7 +38,7 @@ type TaskType = {
   assignedUser: string[]
   dueDate: Date
   createdAt?: Date
-  createdUser?: UserType
+  createdUser?: string
   subTasks: SubTaskType[]
   status: StatusType
 }
@@ -49,6 +49,7 @@ type ProjectType = {
   description: string
   thumbnail: string
   bookmark: boolean
+  members: string[]
 }
 
 type UserCredential = {
@@ -59,3 +60,13 @@ type UserCredential = {
 }
 
 type FilePreview = File & { preview: string }
+
+type Users = Map<string, UserCredential>
+
+type NotificationType = {
+  NO_ID_FIELD?: string
+  id: string
+  type: string
+  receiver: string
+  project?: ProjectType
+}

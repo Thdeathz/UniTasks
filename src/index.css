@@ -73,3 +73,8 @@
   width: 15px !important;
   height: 15px !important;
 }
+
+.ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
