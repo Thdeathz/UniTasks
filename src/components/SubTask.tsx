@@ -1,14 +1,32 @@
 import React, { useState } from 'react'
-import { BarsOutlined, CheckOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons'
+import { BarsOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Checkbox } from 'antd'
+import useBoardStore from '~/stores/BoardStore'
 
 type PropsType = {
-  subTasks: SubTaskType[]
-  setSubTasksList?: React.Dispatch<React.SetStateAction<SubTaskType[]>>
+  task: TaskType
 }
 
-const SubTask = ({ subTasks, setSubTasksList }: PropsType) => {
-  const [isAddNewSubTask, setIsAddNewSubTask] = useState<boolean>(false)
+const SubTask = ({ task }: PropsType) => {
+  const [setCompletedSubTask] = useBoardStore(state => [state.setCompletedSubTask])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const handleCompletedSubTask = (taskIndex: number) => {
+    try {
+      setIsLoading(true)
+      const newSubTasks = Array.from(task.subTasks)
+      const [completedSubTask] = newSubTasks.splice(taskIndex, 1)
+
+      completedSubTask.isCompleted = !completedSubTask.isCompleted
+      newSubTasks.splice(taskIndex, 0, completedSubTask)
+
+      setCompletedSubTask(task, newSubTasks)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="border border-disabled rounded-md w-full">
@@ -18,41 +36,20 @@ const SubTask = ({ subTasks, setSubTasksList }: PropsType) => {
           <span>Sub task</span>
         </div>
 
-        <p className="font-semibold">0/10</p>
+        <p className="font-semibold">
+          {task.subTasks.filter(each => each.isCompleted).length ?? 0}/{task.subTasks.length ?? 0}
+        </p>
       </div>
 
-      <div className="flex flex-col w-full justify-start items-start px-3 py-2">
-        {isAddNewSubTask && (
-          <Checkbox>
-            <div className="flex justify-center items-end gap-2">
-              <input
-                maxLength={128}
-                className="outline-none border-b border-noneSelected w-full py-1 focus:border-textHover transition-colors"
-                placeholder="Enter sub task..."
-              />
-              <div className="flex justify-center items-center gap-1">
-                <CloseOutlined
-                  className="flex justify-center items-center p-1 hover:text-danger transition-colors"
-                  onClick={() => setIsAddNewSubTask(false)}
-                />
-                <CheckOutlined className="flex justify-center items-center p-1 hover:text-checked transition-colors" />
-              </div>
-            </div>
-          </Checkbox>
-        )}
-        {subTasks.length === 0 && !isAddNewSubTask && (
-          <span className="text-noneSelected">No sub task available now !</span>
-        )}
+      <div className="flex flex-col w-full justify-start items-start px-3 py-2 gap-2">
+        {task.subTasks?.map((subTask, index) => (
+          <div key={`added-subtaks-${index}`} className="flex justify-between items-center gap-2">
+            <Checkbox checked={subTask.isCompleted} onChange={() => handleCompletedSubTask(index)}>
+              {isLoading ? <LoadingOutlined className="text-primary-5" /> : subTask.value}
+            </Checkbox>
+          </div>
+        ))}
       </div>
-
-      <button
-        type="button"
-        className="py-1 flex items-center justify-center gap-1 font-semibold w-full hover:text-textHover transition-colors border-t border-disabled"
-        onClick={() => setIsAddNewSubTask(true)}
-      >
-        <PlusOutlined />
-        <span>Add sub task</span>
-      </button>
     </div>
   )
 }

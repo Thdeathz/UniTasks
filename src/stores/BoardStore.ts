@@ -16,6 +16,7 @@ interface IBoardState {
   updatePriorityInDB: (tasks: TaskType[]) => void
   deleteTaskInDB: (task: TaskType) => void
   rollBackTaskInDB: (task: TaskType) => void
+  setCompletedSubTask: (task: TaskType, subTasks: SubTaskType[]) => void
 }
 
 const useBoardStore = create<IBoardState>(set => ({
@@ -178,6 +179,41 @@ const useBoardStore = create<IBoardState>(set => ({
     await updateDocument({
       collectionName: `tasks/${task.id}`,
       data: { status: 'todo' }
+    })
+  },
+
+  setCompletedSubTask: async (task, subTasks) => {
+    await updateDocument({
+      collectionName: `tasks/${task.id}`,
+      data: { subTasks }
+    })
+
+    set(state => {
+      const newCols = new Map(state.board.columns)
+
+      const newTaskCol = newCols.get(task.status)
+
+      if (!newTaskCol) {
+        newCols.set(task.status, {
+          id: task.status,
+          tasks: [{ ...task, subTasks }]
+        })
+      } else {
+        const newTasks = Array.from(
+          newTaskCol.tasks.map(t => (t.id === task.id ? { ...task, subTasks } : t))
+        )
+
+        newCols.set(task.status, {
+          id: task.status,
+          tasks: newTasks
+        })
+      }
+
+      return {
+        board: {
+          columns: newCols
+        }
+      }
     })
   }
 }))

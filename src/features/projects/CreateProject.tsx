@@ -41,11 +41,15 @@ const variants = {
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, x: -10 },
+  hidden: { opacity: 0, x: -20 },
   enter: {
     opacity: 1,
     x: 0,
-    staggerChildren: 0.2
+    transition: { duration: 0.3, type: 'easeOut', staggerChildren: 0.2 }
+  },
+  exit: {
+    opacity: 0,
+    x: -20
   }
 }
 
@@ -86,6 +90,7 @@ const MemberItem = ({ user, setAddedMemberList }: MemberItemPropsType) => {
       variants={itemVariants}
       initial="hidden"
       animate="enter"
+      exit="exit"
     >
       <div className="flex justify-center items-center gap-2">
         <Avatar
@@ -258,8 +263,16 @@ const CreateProject = () => {
                       const user = users.get(each)
                       if (user)
                         return (
-                          <div
+                          <motion.button
+                            type="button"
                             className={`flex justify-between items-center w-full rounded-md px-2 bg-polar-green-2`}
+                            onClick={() =>
+                              setAddedMemberList(prev => prev.filter(uid => uid !== each))
+                            }
+                            variants={itemVariants}
+                            initial="hidden"
+                            animate="enter"
+                            exit="exit"
                           >
                             <div className="flex justify-center items-center gap-2">
                               <Avatar
@@ -276,7 +289,7 @@ const CreateProject = () => {
                             </div>
 
                             <CheckOutlined className="flex justify-center items-center text-2xl text-polar-green-5" />
-                          </div>
+                          </motion.button>
                         )
                     })}
 

@@ -23,9 +23,8 @@ type UserType = {
 }
 
 type SubTaskType = {
-  id?: string
   value: string
-  status: boolean
+  isCompleted: boolean
 }
 
 type TaskType = {
@@ -69,4 +68,12 @@ type NotificationType = {
   type: string
   receiver: string
   project?: ProjectType
+}
+
+type CommentType = {
+  NO_ID_FIELD?: string
+  sender: string
+  task: string
+  value: string
+  displayName: string
 }

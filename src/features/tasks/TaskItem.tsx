@@ -13,7 +13,6 @@ import {
 import { useHover } from 'usehooks-ts'
 import { motion } from 'framer-motion'
 import Tag from '~/components/Tag'
-import SubTask from '~/components/SubTask'
 import useProjectStore from '~/stores/ProjectStore'
 import ChatBox from '~/components/ChatBox'
 import useBoardStore from '~/stores/BoardStore'
@@ -21,6 +20,7 @@ import { toast } from 'react-toastify'
 import moment from 'moment'
 import { useNavigate } from 'react-router-dom'
 import useCredentialStore from '~/stores/CredentialStore'
+import SubTask from '~/components/SubTask'
 
 type PropsType = {
   title: React.ReactNode
@@ -239,23 +239,19 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
                 {task.assignedUser?.map((uid, index) => (
                   <UserItem key={`assigned-user-${index}`} size="large" user={users.get(uid)} />
                 ))}
-
-                <Tooltip placement="bottom" title="New user" arrow={false}>
-                  <PlusCircleOutlined className="cursor-pointer text-lg text-noneSelected hover:text-textHover transition-colors flex justify-center items-center" />
-                </Tooltip>
               </div>
             </div>
 
             <div className="w-full">
               <p className="text-lg font-semibold mb-1">To do:</p>
 
-              <SubTask subTasks={task.subTasks} />
+              <SubTask task={task} />
             </div>
           </div>
 
           <div className="basis-1/3 bg-bgSecondary h-full p-2 rounded-e flex flex-col items-start justify-start">
             <p className="font-semibold text-lg">Comments</p>
-            <ChatBox />
+            <ChatBox task={task} />
           </div>
         </div>
       </Modal>

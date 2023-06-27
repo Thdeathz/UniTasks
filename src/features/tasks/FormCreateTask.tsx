@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Button, DatePicker, Form, Input, Select } from 'antd'
 import { TagOutlined } from '@ant-design/icons'
-import SubTask from '~/components/SubTask'
 import NewTag from '~/components/NewTag'
 import Tag from '~/components/Tag'
 import { v4 } from 'uuid'
@@ -10,6 +9,7 @@ import useCredentialStore from '~/stores/CredentialStore'
 import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
 import useProjectStore from '~/stores/ProjectStore'
+import AddSubTask from '~/components/AddSubTask'
 
 type PropsType = {
   projectId: string
@@ -50,7 +50,7 @@ const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
         status: 'todo',
         priority: -1,
         createdAt,
-        subTasks: []
+        subTasks: [...subTasksList]
       })
 
       setIsAddNewTag(false)
@@ -153,6 +153,7 @@ const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
         rules={[{ required: true, message: 'Task due date is required.' }]}
       >
         <DatePicker
+          showTime
           format="YYYY-MM-DD HH:mm:ss"
           disabledDate={current => {
             return current < dayjs().startOf('day')
@@ -161,7 +162,7 @@ const FormCreateTask = ({ projectId, setIsOpen }: PropsType) => {
       </Form.Item>
 
       <Form.Item label={<p className="text-lg font-semibold">To do:</p>} name="todo">
-        <SubTask subTasks={subTasksList} setSubTasksList={setSubTasksList} />
+        <AddSubTask subTasks={subTasksList} setSubTasksList={setSubTasksList} />
       </Form.Item>
 
       <div className=" flex justify-end items-center mb-2 gap-2">
