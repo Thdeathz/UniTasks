@@ -25,10 +25,10 @@ const AddSubTask = ({ subTasks, setSubTasksList }: PropsType) => {
           <span>Sub task</span>
         </div>
 
-        <p className="font-semibold">0/10</p>
+        <p className="font-semibold">0/{subTasks?.length ?? 0}</p>
       </div>
 
-      <div className="flex flex-col w-full justify-start items-start px-3 py-2">
+      <div className="flex flex-col w-full justify-start items-start px-3 py-2 gap-1">
         {subTasks?.map((subTask, index) => (
           <div key={`added-subtaks-${index}`} className="flex justify-between items-center gap-2">
             <Checkbox>{subTask.value}</Checkbox>

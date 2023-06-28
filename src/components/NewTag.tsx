@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ColorPicker, theme } from 'antd'
 import { CheckOutlined } from '@ant-design/icons'
+import { recommendedColor } from '~/app/config'
 
 type PropsType = {
   tagsList: TagType[]
@@ -23,7 +24,12 @@ const NewTag = ({ tagsList, setTagsList, setIsAddNewTag }: PropsType) => {
   return (
     <>
       <ColorPicker
-        className="rounded-full"
+        presets={[
+          {
+            label: 'Recommended',
+            colors: [...recommendedColor]
+          }
+        ]}
         onChange={(value, hex) => setTagValue({ ...tagValue, color: hex })}
       />
       <input

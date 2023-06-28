@@ -5,19 +5,23 @@ import { arrayUnion } from 'firebase/firestore'
 
 interface IProjectState {
   projects: Project
+  filteredProject: Project
   getProjects: (currentUserUid: string) => void
   bookmarkProject: (projectId: string, status: boolean) => void
   createProject: (project: ProjectType, inviteList: string[]) => void
   joinProject: (project: ProjectType, currentUserUid: string, notificationId: string) => void
+  setFilterdProject: (projects: ProjectType[]) => void
 }
 
 const useProjectStore = create<IProjectState>((set, get) => ({
   projects: new Map<string, ProjectType>(),
 
+  filteredProject: new Map<string, ProjectType>(),
+
   getProjects: async currentUserUid => {
     const projects = await getAllProjects(currentUserUid)
 
-    set({ projects })
+    set({ projects, filteredProject: projects })
   },
 
   bookmarkProject: async (projectId, status) => {
@@ -40,7 +44,7 @@ const useProjectStore = create<IProjectState>((set, get) => ({
   },
 
   createProject: async (project, inviteList) => {
-    const { id, name, description, thumbnail, members } = project
+    const { id, name, description, thumbnail, members, tags } = project
 
     await addDocument({
       collectionName: 'projects',
@@ -50,7 +54,8 @@ const useProjectStore = create<IProjectState>((set, get) => ({
         description,
         thumbnail,
         bookmark: true,
-        members
+        members,
+        tags
       }
     })
 
@@ -98,6 +103,19 @@ const useProjectStore = create<IProjectState>((set, get) => ({
     const projects = await getAllProjects(currentUserUid)
 
     set({ projects })
+  },
+
+  setFilterdProject: projects => {
+    set(state => {
+      const newProjects = projects.reduce((acc: Map<string, ProjectType>, project: ProjectType) => {
+        acc.set(project.id, project)
+        return acc
+      }, new Map<string, ProjectType>())
+
+      return {
+        filteredProject: newProjects
+      }
+    })
   }
 }))
 

@@ -8,7 +8,7 @@ import {
   UserAddOutlined,
   UserOutlined
 } from '@ant-design/icons'
-import { Avatar, Button, Form, Input, Tooltip } from 'antd'
+import { Avatar, Button, Form, Input, Select, Tooltip } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { v4 } from 'uuid'
 import { addDocument } from '~/firebase/services'
@@ -20,6 +20,7 @@ import { motion } from 'framer-motion'
 import UploadThumbnail from './UploadThumbnail'
 import uploadFile from '~/hooks/uploadFile'
 import useCredentialStore from '~/stores/CredentialStore'
+import { projectTags } from '~/app/config'
 
 type StepHeaderPropsType = {
   currentStep: number
@@ -148,11 +149,11 @@ const CreateProject = () => {
     return
   }
 
-  const onFinish = async (values: { name: string; description: string }) => {
+  const onFinish = async (values: { name: string; description: string; tags: string[] }) => {
     setIsLoading(true)
-    const { name, description } = values
+    const { name, description, tags } = values
 
-    if (!name || !description || !projectThumbnail) return
+    if (!name || !description || !projectThumbnail || !tags) return
 
     const id = v4()
 
@@ -165,7 +166,8 @@ const CreateProject = () => {
             description,
             thumbnail: res,
             bookmark: true,
-            members: [credential.uid]
+            members: [credential.uid],
+            tags: tags
           },
           addedMemberList.filter(uid => uid !== credential.uid)
         )
@@ -227,6 +229,40 @@ const CreateProject = () => {
                 rules={[{ required: true, message: 'Description is required.' }]}
               >
                 <Input.TextArea placeholder="Show more about your project..." />
+              </Form.Item>
+
+              <Form.Item
+                label={<p className="text-sm font-medium">Your project is related to:</p>}
+                name="tags"
+                rules={[
+                  { required: true, message: 'Please select at least 1 tag.' },
+                  {
+                    validator: (rule, value, callback) => {
+                      if (value) {
+                        if (value.length > 3) {
+                          callback('No more than 3 tags please.')
+                        } else if (value.length <= 3) {
+                          callback()
+                        }
+                      }
+                      return
+                    }
+                  }
+                ]}
+              >
+                <Select
+                  showSearch
+                  mode="multiple"
+                  placeholder="Select tag"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                  }
+                  options={Array.from(Object.keys(projectTags), each => ({
+                    value: each,
+                    label: each
+                  }))}
+                />
               </Form.Item>
             </div>
 
@@ -315,7 +351,12 @@ const CreateProject = () => {
                 <Button
                   disabled={
                     (currentStep === 1 && !values?.name) ||
-                    (currentStep === 2 && (!values?.description || Boolean(!projectThumbnail)))
+                    (currentStep === 2 &&
+                      (!values?.description ||
+                        Boolean(!projectThumbnail) ||
+                        !values?.tags ||
+                        values.tags.length === 0 ||
+                        values.tags.length > 3))
                   }
                   type="primary"
                   htmlType="button"

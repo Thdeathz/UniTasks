@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { BarsOutlined, LoadingOutlined } from '@ant-design/icons'
-import { Checkbox } from 'antd'
+import { Checkbox, Progress } from 'antd'
 import useBoardStore from '~/stores/BoardStore'
 
 type PropsType = {
@@ -41,7 +41,7 @@ const SubTask = ({ task }: PropsType) => {
         </p>
       </div>
 
-      <div className="flex flex-col w-full justify-start items-start px-3 py-2 gap-2">
+      <div className="flex flex-col w-full justify-start items-start px-3 py-2 gap-2 max-h-[30vh] custom-scroll-bar overflow-y-auto">
         {task.subTasks?.map((subTask, index) => (
           <div key={`added-subtaks-${index}`} className="flex justify-between items-center gap-2">
             <Checkbox checked={subTask.isCompleted} onChange={() => handleCompletedSubTask(index)}>
@@ -49,6 +49,17 @@ const SubTask = ({ task }: PropsType) => {
             </Checkbox>
           </div>
         ))}
+      </div>
+
+      <div className="px-2 py-1 flex items-center justify-center gap-1 font-semibold w-full border-t border-disabled">
+        <Progress
+          percent={
+            Math.round(
+              (task.subTasks?.filter(each => each.isCompleted).length * 100) / task.subTasks?.length
+            ) ?? 0
+          }
+          size="small"
+        />
       </div>
     </div>
   )

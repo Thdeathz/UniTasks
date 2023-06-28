@@ -49,6 +49,7 @@ type ProjectType = {
   thumbnail: string
   bookmark: boolean
   members: string[]
+  tags: string[]
 }
 
 type UserCredential = {

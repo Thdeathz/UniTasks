@@ -202,8 +202,8 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
         width={950}
         footer={[<></>]}
       >
-        <div className="flex justify-between items-start h-[75vh] overflow-y-auto custom-scroll-bar">
-          <div className="basis-2/3 flex flex-col justify-start items-start gap-1 pr-2">
+        <div className="flex justify-between items-start h-[75vh] overflow-hidden">
+          <div className="basis-2/3 pr-2 h-full">
             <div className="flex justify-between items-center w-full">
               <div className="flex justify-start items-center gap-2">
                 {task.tags?.map((tag, index) => (
@@ -226,13 +226,13 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
 
             <p>{task.description}</p>
 
-            <div className="w-full">
+            <div className="mb-1">
               <p className="text-lg font-semibold mb-1">Created by:</p>
 
               {task.createdUser && <UserItem size="large" user={users.get(task.createdUser)} />}
             </div>
 
-            <div className="w-full">
+            <div className="mb-1">
               <p className="text-lg font-semibold mb-1">Assigned to:</p>
 
               <div className="flex justify-start items-center gap-3">
@@ -242,7 +242,7 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
               </div>
             </div>
 
-            <div className="w-full">
+            <div className="mb-1">
               <p className="text-lg font-semibold mb-1">To do:</p>
 
               <SubTask task={task} />

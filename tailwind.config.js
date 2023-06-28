@@ -7,7 +7,8 @@ export default {
         content: 'calc(100vh - 3rem)',
         subContent: 'calc(100vh - 11rem)',
         profile: 'calc(100vh - 4.5rem)',
-        cardBody: 'calc(100% - 2rem)'
+        cardBody: 'calc(100% - 2rem)',
+        subTasks: 'calc(75vh - 25rem)'
       },
       minHeight: {
         content: 'calc(100vh - 3rem)'

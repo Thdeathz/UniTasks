@@ -110,3 +110,9 @@
 .rbc-timeslot-group {
   min-height: 120px !important;
 }
+
+.ant-input-group-addon {
+  display: flex;
+  justify-items: center;
+  align-items: center;
+}
