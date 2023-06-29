@@ -29,7 +29,7 @@ const FilterBar = () => {
   }
 
   return (
-    <div className="mb-2 flex justify-start items-center gap-2">
+    <div className="mb-2 flex justify-start items-center gap-2 sticky top-0 bg-transparent z-50">
       <Popover
         placement="bottomLeft"
         trigger="click"

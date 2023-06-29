@@ -7,16 +7,18 @@ import useCredentialStore from '~/stores/CredentialStore'
 const Prefetch = () => {
   const [getBoard] = useBoardStore(state => [state.getBoard])
   const [getProjects] = useProjectStore(state => [state.getProjects])
-  const [credential, getAllUsers] = useCredentialStore(state => [
+  const [credential, getAllUsers, getUserPlan] = useCredentialStore(state => [
     state.credential,
-    state.getAllUsers
+    state.getAllUsers,
+    state.getUserPlan
   ])
 
   useEffect(() => {
     getBoard()
     getProjects(credential.uid)
     getAllUsers()
-  }, [getBoard, getProjects, getAllUsers])
+    getUserPlan(credential.uid)
+  }, [getBoard, getProjects, getAllUsers, getUserPlan])
 
   return <Outlet />
 }

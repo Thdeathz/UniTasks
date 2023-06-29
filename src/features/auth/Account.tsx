@@ -2,7 +2,7 @@ import React from 'react'
 import { Avatar, Button } from 'antd'
 import HomeLayout from '~/components/Layouts/HomeLayout'
 import useCredentialStore from '~/stores/CredentialStore'
-import { EditOutlined } from '@ant-design/icons'
+import { EditOutlined, UserOutlined } from '@ant-design/icons'
 
 type AccountItemPropsType = {
   children: React.ReactNode
@@ -35,7 +35,7 @@ const Account = () => {
         <AccountItem>
           <div className="flex justify-between items-center">
             <div className="flex justify-center items-center gap-2">
-              <Avatar src={credential.avatar} size={72} />
+              <Avatar src={credential.avatar} size={72} icon={<UserOutlined />} />
               <div>
                 <p className="font-semibold text-xl">{credential.displayName}</p>
                 <p className="text-base text-noneSelected">{credential.email}</p>

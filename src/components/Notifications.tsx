@@ -1,44 +1,19 @@
 import React from 'react'
-import { BellOutlined, ExclamationCircleFilled } from '@ant-design/icons'
-import { Badge, Modal, Popover, Tooltip } from 'antd'
+import { BellOutlined } from '@ant-design/icons'
+import { Badge, Popconfirm, Popover, Tooltip } from 'antd'
 import { query, collection, where } from 'firebase/firestore'
 import { useFirestore, useFirestoreCollectionData } from 'reactfire'
 import useCredentialStore from '~/stores/CredentialStore'
 import useProjectStore from '~/stores/ProjectStore'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-
-type showConfirmPropsType = {
-  projectName: string
-  onOk: () => void
-}
-
-const { confirm } = Modal
-
-const showConfirm = ({ projectName, onOk }: showConfirmPropsType) => {
-  confirm({
-    title: 'Accept the invitation',
-    icon: <ExclamationCircleFilled />,
-    content: (
-      <p>
-        Do you want to accept the invitation to join{' '}
-        <span className="font-medium">{projectName}</span> project?
-      </p>
-    ),
-    centered: true,
-    closable: true,
-    okText: 'Accept',
-    cancelText: 'Reject',
-    onOk,
-    onCancel() {}
-  })
-}
+import { deleteDocument } from '~/firebase/services'
 
 const Notifications = () => {
   const navigate = useNavigate()
 
-  const [credential] = useCredentialStore(state => [state.credential])
-  const [joinProject] = useProjectStore(state => [state.joinProject])
+  const [credential, users] = useCredentialStore(state => [state.credential, state.users])
+  const [projects, joinProject] = useProjectStore(state => [state.projects, state.joinProject])
   const { data: messagesList } = useFirestoreCollectionData(
     query(collection(useFirestore(), 'notifications'), where('receiver', '==', credential.uid))
   )
@@ -52,14 +27,14 @@ const Notifications = () => {
         <div className="min-w-[18rem] max-w-[18rem] overflow-hidden flex flex-col justify-start items-start gap-1">
           <p className="text-base font-semibold">🔔Notifications</p>
           <div className="w-full">
-            {(messagesList as NotificationType[])?.map(message => (
-              <button
-                key={message.NO_ID_FIELD}
-                className="px-2 py-2 hover:bg-primary-1 rounded-md w-full flex justify-start items-center gap-2 transition-colors"
-                onClick={() =>
-                  showConfirm({
-                    projectName: message.project?.name as string,
-                    onOk: () => {
+            {(messagesList as NotificationType[])?.map(message => {
+              if (message.type === 'project-invite')
+                return (
+                  <Popconfirm
+                    key={message.NO_ID_FIELD}
+                    title="Accept the invitation"
+                    description="Do you want to accept the invitation to join this project?"
+                    onConfirm={() => {
                       joinProject(
                         message.project as ProjectType,
                         credential.uid,
@@ -70,26 +45,53 @@ const Notifications = () => {
                         toastId: 'join-project-success',
                         icon: '🎉'
                       })
-                    }
-                  })
-                }
-              >
-                <img
-                  src={message.project?.thumbnail}
-                  className="w-[2rem] aspect-square rounded-md object-cover"
-                  alt="project-thumbnail"
-                />
+                    }}
+                    okText="Accept"
+                    cancelText="Reject"
+                  >
+                    <button className="px-2 py-2 hover:bg-primary-1 rounded-md w-full flex justify-start items-center gap-2 transition-colors mb-1">
+                      <img
+                        src={message.project?.thumbnail}
+                        className="w-[2rem] aspect-square rounded-md object-cover"
+                        alt="project-thumbnail"
+                      />
 
-                <div className="flex flex-col justify-start items-start gap-1 max-w-[15rem]">
-                  <p className="leading-none text-base font-medium truncate">
-                    {message.project?.name}
-                  </p>
-                  <p className="leading-none text-sm text-noneSelected">
-                    You have an invitation to join 👋
-                  </p>
-                </div>
-              </button>
-            ))}
+                      <div className="flex flex-col justify-start items-start gap-1">
+                        <p className="leading-none text-base font-medium truncate">
+                          {message.project?.name}
+                        </p>
+                        <p className="leading-none text-sm text-noneSelected">
+                          You have an invitation to join 👋
+                        </p>
+                      </div>
+                    </button>
+                  </Popconfirm>
+                )
+
+              if (message.type === 'new-task' && message.sender && message.project)
+                return (
+                  <button
+                    key={message.NO_ID_FIELD}
+                    className="px-2 py-2 hover:bg-primary-1 rounded-md w-full flex justify-start items-center gap-2 transition-colors mb-1"
+                    onClick={async () => {
+                      await deleteDocument({
+                        collectionName: `notifications/${message.NO_ID_FIELD}`
+                      })
+                      navigate(`/project/${message.project?.id}/tasks`)
+                    }}
+                  >
+                    <div className="flex flex-col justify-start items-start gap-1">
+                      <p className="leading-none text-base font-medium truncate">
+                        {projects.get(message.project.id)?.name}
+                      </p>
+                      <p className="leading-none text-sm text-noneSelected">
+                        {users.get(message.sender)?.displayName} has assigned you a new task 🎉
+                      </p>
+                    </div>
+                  </button>
+                )
+            })}
+
             {(!messagesList || (messagesList as NotificationType[])?.length === 0) && (
               <p className="text-disabled">There is no unread notice.</p>
             )}

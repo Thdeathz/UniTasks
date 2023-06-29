@@ -7,6 +7,9 @@ import useBoardStore from '~/stores/BoardStore'
 import useProjectStore from '~/stores/ProjectStore'
 import useCredentialStore from '~/stores/CredentialStore'
 import { projectTags } from '~/app/config'
+import { RadialLinearScale, Chart, PointElement, LineElement } from 'chart.js'
+
+Chart.register(RadialLinearScale, PointElement, LineElement)
 
 type EachColumnPropsType = {
   id: StatusType
@@ -28,6 +31,8 @@ const columnTitle: {
 }
 
 const MemberInfo = ({ user }: MemberInfoPropsType) => {
+  const [credential] = useCredentialStore(state => [state.credential])
+
   if (user)
     return (
       <div className="flex justify-center items-center gap-2">
@@ -39,7 +44,9 @@ const MemberInfo = ({ user }: MemberInfoPropsType) => {
         />
 
         <div className="flex flex-col justify-start items-start">
-          <p className="font-semibold">{user.displayName}</p>
+          <p className="font-semibold">
+            {user.displayName} {user.uid === credential.uid && '(You)'}
+          </p>
           <p className="text-noneSelected">{user.email}</p>
         </div>
       </div>
@@ -82,7 +89,7 @@ const ProjectOverview = () => {
   const { projectId } = useParams()
   const [board] = useBoardStore(state => [state.board])
   const [projects] = useProjectStore(state => [state.projects])
-  const [users] = useCredentialStore(state => [state.users])
+  const [credential, users] = useCredentialStore(state => [state.credential, state.users])
 
   let todo = 0
   let inprogress = 0
@@ -116,7 +123,6 @@ const ProjectOverview = () => {
             <p className="text-2xl font-semibold">About project</p>
             <div className="flex justify-start items-center gap-1">
               {projects.get(projectId as string)?.tags.map((tag, index) => (
-                // <p className="text-sm font-medium">{tag}</p>
                 <Tag key={`project-tag-${index}`} color={projectTags[tag].color}>
                   {tag}
                 </Tag>
@@ -130,7 +136,7 @@ const ProjectOverview = () => {
             <p className="text-2xl font-semibold mb-4">Overview</p>
             <div className="flex justify-between items-start">
               <div className="flex flex-col justify-start items-start gap-4">
-                {Array.from(board.columns.entries()).map(([id, column]) => {
+                {Array.from(board.columns.entries()).map(([id, column], index) => {
                   if (id === 'todo')
                     todo = column.tasks.filter(task => task.projectId === projectId).length
                   if (id === 'inprogress')
@@ -143,7 +149,7 @@ const ProjectOverview = () => {
 
                   return (
                     <EachColumn
-                      key={`each-status-overview-${id}`}
+                      key={`each-status-overview-${index}`}
                       id={id}
                       tasks={column.tasks.filter(task => task.projectId === projectId)}
                     />

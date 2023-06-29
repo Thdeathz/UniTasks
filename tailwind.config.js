@@ -8,7 +8,8 @@ export default {
         subContent: 'calc(100vh - 11rem)',
         profile: 'calc(100vh - 4.5rem)',
         cardBody: 'calc(100% - 2rem)',
-        subTasks: 'calc(75vh - 25rem)'
+        subTasks: 'calc(75vh - 25rem)',
+        projectCalendar: 'calc(100vh - 4.5rem)'
       },
       minHeight: {
         content: 'calc(100vh - 3rem)'
@@ -36,6 +37,7 @@ export default {
       'primary-3': '#91D5FF',
       'primary-4': '#69C0FF',
       'primary-5': '#40A9FF',
+      'primary-8': '#0050B3',
       'neutral-2': '#FAFAFA',
       'neutral-3': '#F5F5F5',
       'dust-red-2': '#FFCCC7',

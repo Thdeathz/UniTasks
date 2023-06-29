@@ -49,6 +49,10 @@ const SubTask = ({ task }: PropsType) => {
             </Checkbox>
           </div>
         ))}
+
+        {task.subTasks?.length === 0 && (
+          <span className="text-noneSelected">No sub task available now !</span>
+        )}
       </div>
 
       <div className="px-2 py-1 flex items-center justify-center gap-1 font-semibold w-full border-t border-disabled">

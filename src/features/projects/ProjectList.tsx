@@ -57,7 +57,7 @@ const ProjectItem = ({ project, upcomingTask }: ProjectItemPropsType) => {
         </div>
 
         <div className="flex justify-start items-center mb-2">
-          {project.tags.map((tag, index) => (
+          {project.tags.slice(0, 2).map((tag, index) => (
             <Tag key={`project-tag-${project.id}-${index}`} color={projectTags[tag].color}>
               {tag}
             </Tag>

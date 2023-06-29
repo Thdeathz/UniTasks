@@ -96,7 +96,6 @@
 .rbc-time-slot {
   background-color: #eaf3fa;
   color: #74a4c3;
-  border-color: aqua !important;
 }
 
 .rbc-event-label {
@@ -109,6 +108,11 @@
 
 .rbc-timeslot-group {
   min-height: 120px !important;
+}
+
+.rbc-addons-dnd-resize-ns-icon {
+  width: 24px !important;
+  padding-top: 2px 0 !important;
 }
 
 .ant-input-group-addon {

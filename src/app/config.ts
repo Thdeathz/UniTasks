@@ -1,3 +1,16 @@
+export const columnTitle: {
+  [key in StatusType]: {
+    title: string
+    bgColor: string
+  }
+} = {
+  todo: { title: 'TO DO', bgColor: 'bg-todo' },
+  inprogress: { title: 'IN PROGRESS', bgColor: 'bg-inprogress' },
+  reviewing: { title: 'REVIEWING', bgColor: 'bg-reviewing' },
+  completed: { title: 'COMPLETED', bgColor: 'bg-completed' },
+  deleted: { title: 'DELETED', bgColor: 'bg-deleted' }
+}
+
 export const recommendedColor = [
   '#F5222D',
   '#FA8C16',

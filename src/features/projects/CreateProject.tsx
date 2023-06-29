@@ -1,17 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import {
-  CheckOutlined,
-  DeleteOutlined,
-  InboxOutlined,
-  LoadingOutlined,
-  SendOutlined,
-  UserAddOutlined,
-  UserOutlined
-} from '@ant-design/icons'
+import React, { useState } from 'react'
+import { CheckOutlined, LoadingOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar, Button, Form, Input, Select, Tooltip } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { v4 } from 'uuid'
-import { addDocument } from '~/firebase/services'
 import { toast } from 'react-toastify'
 import useProjectStore from '~/stores/ProjectStore'
 import appLogo from '~/assets/Logo.png'
@@ -80,7 +71,7 @@ const StepHeader = ({ currentStep }: StepHeaderPropsType) => {
   return <></>
 }
 
-const MemberItem = ({ user, setAddedMemberList }: MemberItemPropsType) => {
+export const MemberItem = ({ user, setAddedMemberList }: MemberItemPropsType) => {
   const handleSendInvite = () => {
     setAddedMemberList(prev => [...prev, user.uid])
   }
@@ -217,7 +208,11 @@ const CreateProject = () => {
               name="name"
               rules={[{ required: true, message: 'Project name is required.' }]}
             >
-              <Input size="large" placeholder="Ex: Project GR1, Bài tập lớn UI/UX, ..." />
+              <Input
+                maxLength={64}
+                size="large"
+                placeholder="Ex: Project GR1, Bài tập lớn UI/UX, ..."
+              />
             </Form.Item>
 
             <div className={currentStep === 2 ? `block` : `hidden`}>

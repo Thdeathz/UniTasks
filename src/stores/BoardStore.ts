@@ -24,11 +24,15 @@ const useBoardStore = create<IBoardState>(set => ({
     columns: new Map<StatusType, Column>()
   },
 
-  isSideBarOpen: true,
+  isSideBarOpen: window.localStorage.getItem('isSideBarOpen') === 'true',
 
   isSubMenuOpen: false,
 
-  setIsSideBarOpen: nextSideBarState => set({ isSideBarOpen: nextSideBarState }),
+  setIsSideBarOpen: nextSideBarState => {
+    window.localStorage.setItem('isSideBarOpen', String(nextSideBarState))
+
+    set({ isSideBarOpen: nextSideBarState })
+  },
 
   setIsSubMenuOpen: nextSubMenuState => set({ isSubMenuOpen: nextSubMenuState }),
 
@@ -69,6 +73,20 @@ const useBoardStore = create<IBoardState>(set => ({
       collectionName: 'tasks',
       id: task.id,
       data: { ...task, priority: -1 }
+    })
+
+    task.assignedUser.forEach(async user => {
+      await addDocument({
+        collectionName: 'notifications',
+        data: {
+          receiver: user,
+          type: 'new-task',
+          project: {
+            id: task.projectId
+          },
+          sender: task.createdUser
+        }
+      })
     })
 
     set(state => {

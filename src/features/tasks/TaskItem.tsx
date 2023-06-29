@@ -1,56 +1,27 @@
 import React, { useState, useRef } from 'react'
-import { Avatar, Modal, Tooltip } from 'antd'
 import {
   CalendarOutlined,
-  EditOutlined,
   MessageOutlined,
-  PlusCircleOutlined,
   PlusOutlined,
-  RollbackOutlined,
-  TagOutlined,
-  UserOutlined
+  RollbackOutlined
 } from '@ant-design/icons'
 import { useHover } from 'usehooks-ts'
 import { motion } from 'framer-motion'
-import Tag from '~/components/Tag'
 import useProjectStore from '~/stores/ProjectStore'
-import ChatBox from '~/components/ChatBox'
 import useBoardStore from '~/stores/BoardStore'
 import { toast } from 'react-toastify'
-import moment from 'moment'
 import { useNavigate } from 'react-router-dom'
 import useCredentialStore from '~/stores/CredentialStore'
 import SubTask from '~/components/SubTask'
+import UserItem from '~/components/UserItem'
+import TaskDetailModal from './TaskDetailModal'
+import { Tag } from 'antd'
 
 type PropsType = {
   title: React.ReactNode
   task: TaskType
   showHeader?: boolean
   disabled?: boolean
-}
-
-type UserItemPropsType = {
-  size: 'large' | 'small'
-  user: UserCredential | undefined
-}
-
-const UserItem = ({ size, user }: UserItemPropsType) => {
-  if (user)
-    return (
-      <div className="flex justify-start items-center gap-1">
-        <Avatar
-          className="flex justify-center items-center"
-          src={user.avatar ?? null}
-          size={size === 'large' ? 24 : 20}
-          icon={<UserOutlined className={`${size === 'small' && 'text-xm'}`} />}
-        />
-        <span className={size === 'large' ? 'font-normal text-base' : 'text-sm'}>
-          {user.displayName}
-        </span>
-      </div>
-    )
-
-  return <></>
 }
 
 const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
@@ -96,9 +67,11 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
         )}
         <div className="flex flex-col justify-start items-start w-full p-2 gap-2">
           <div className="flex justify-between items-center w-full">
-            <div className="grow flex justify-start items-center gap-2 w-full">
+            <div className="grow flex justify-start items-center w-full">
               {task.tags?.slice(0, 2)?.map((tag, index) => (
-                <Tag key={`tag-${index}`} type="custom" text={tag.name} color={tag.color} />
+                <Tag key={`tag-${index}`} color={tag.color}>
+                  {tag.name}
+                </Tag>
               ))}
               <>
                 {task.tags.length > 2 && (
@@ -154,107 +127,14 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
         )}
       </div>
 
-      <Modal
-        title={
-          <div className="flex justify-start items-center h-full gap-2">
-            {title}
-
-            {showHeader && (
-              <p
-                className="font-medium text-textHover hover:text-primary-4 transition-colors cursor-pointer"
-                onClick={() => navigate(`/project/${task.projectId}/tasks`)}
-              >
-                {projects?.get(task.projectId)?.name}
-              </p>
-            )}
-
-            {task?.createdAt && (
-              <p className="font-medium text-noneSelected">
-                Task created at:{' '}
-                <span className="text-black">
-                  {new Intl.DateTimeFormat('en-GB', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  }).format(new Date(task?.createdAt))}
-                </span>
-              </p>
-            )}
-
-            {task?.dueDate && (
-              <p className="font-medium text-noneSelected">
-                Due date:{' '}
-                <span className={`${isOutDate ? 'text-danger' : 'text-black'}`}>
-                  {new Intl.DateTimeFormat('en-GB', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  }).format(new Date(task?.dueDate))}
-                </span>
-              </p>
-            )}
-          </div>
-        }
-        style={{ top: 20 }}
-        open={isOpen}
-        onOk={() => setIsOpen(false)}
-        onCancel={() => setIsOpen(false)}
-        width={950}
-        footer={[<></>]}
-      >
-        <div className="flex justify-between items-start h-[75vh] overflow-hidden">
-          <div className="basis-2/3 pr-2 h-full">
-            <div className="flex justify-between items-center w-full">
-              <div className="flex justify-start items-center gap-2">
-                {task.tags?.map((tag, index) => (
-                  <Tag key={`tag-${index}`} type="custom" text={tag.name} color={tag.color} />
-                ))}
-
-                <Tooltip placement="bottom" title="New tag" arrow={false}>
-                  <button className="text-sm font-medium flex justify-center items-center gap-1 text-noneSelected border p-1 rounded-md border-disabled border-dashed hover:text-textHover hover:border-textHover transition-colors">
-                    <TagOutlined />
-                  </button>
-                </Tooltip>
-              </div>
-
-              <Tooltip placement="bottom" title="Edit task" arrow={false}>
-                <EditOutlined className="cursor-pointer hover:text-textHover transition-colors text-lg text-noneSelected" />
-              </Tooltip>
-            </div>
-
-            <p className="text-2xl font-semibold">{task.title}</p>
-
-            <p>{task.description}</p>
-
-            <div className="mb-1">
-              <p className="text-lg font-semibold mb-1">Created by:</p>
-
-              {task.createdUser && <UserItem size="large" user={users.get(task.createdUser)} />}
-            </div>
-
-            <div className="mb-1">
-              <p className="text-lg font-semibold mb-1">Assigned to:</p>
-
-              <div className="flex justify-start items-center gap-3">
-                {task.assignedUser?.map((uid, index) => (
-                  <UserItem key={`assigned-user-${index}`} size="large" user={users.get(uid)} />
-                ))}
-              </div>
-            </div>
-
-            <div className="mb-1">
-              <p className="text-lg font-semibold mb-1">To do:</p>
-
-              <SubTask task={task} />
-            </div>
-          </div>
-
-          <div className="basis-1/3 bg-bgSecondary h-full p-2 rounded-e flex flex-col items-start justify-start">
-            <p className="font-semibold text-lg">Comments</p>
-            <ChatBox task={task} />
-          </div>
-        </div>
-      </Modal>
+      <TaskDetailModal
+        title={title}
+        showHeader={showHeader}
+        project={projects.get(task.projectId)}
+        task={task}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
     </>
   )
 }

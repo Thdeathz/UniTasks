@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import SideBar from '../SideBar'
 import NavBar from '../NavBar'
 import useCredentialStore from '~/stores/CredentialStore'
+import EditProject from '~/features/projects/EditProject'
 
 type PropsType = {
   children: React.ReactNode
@@ -103,8 +104,9 @@ const ProjectLayout = ({ children, projectId }: PropsType) => {
                           cursor: 'pointer'
                         }}
                       >
-                        {projects.get(projectId as string)?.members.map(member => (
+                        {projects.get(projectId as string)?.members.map((member, index) => (
                           <Avatar
+                            key={`members-list-${index}`}
                             src={users.get(member)?.avatar ?? null}
                             className="flex justify-center items-center text-sm"
                             style={{ backgroundColor: '#f56a00' }}
@@ -114,18 +116,10 @@ const ProjectLayout = ({ children, projectId }: PropsType) => {
                       </Avatar.Group>
 
                       <div className="flex justify-center items-center gap-2">
-                        <Button
-                          type="primary"
-                          ghost
-                          className="flex justify-center items-center"
-                          icon={<EditOutlined />}
-                        >
-                          Edit
-                        </Button>
+                        <EditProject />
 
                         <Button
                           type="primary"
-                          ghost
                           className="flex justify-center items-center"
                           icon={<ShareAltOutlined />}
                         >

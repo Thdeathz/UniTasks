@@ -69,6 +69,7 @@ type NotificationType = {
   type: string
   receiver: string
   project?: ProjectType
+  sender?: string
 }
 
 type CommentType = {
@@ -77,4 +78,12 @@ type CommentType = {
   task: string
   value: string
   displayName: string
+}
+
+type UserPlan = {
+  id: string
+  title: string
+  start: Date
+  end: Date
+  task: TaskType
 }

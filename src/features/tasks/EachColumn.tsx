@@ -4,6 +4,7 @@ import { StrictModeDroppable as Droppable } from '~/helpers/StrictModeDroppable'
 import { Draggable } from 'react-beautiful-dnd'
 import TaskItem from './TaskItem'
 import { Empty } from 'antd'
+import { columnTitle } from '~/app/config'
 
 type PropsType = {
   id: StatusType
@@ -12,26 +13,10 @@ type PropsType = {
   showHeader?: boolean
 }
 
-const columnTitle: {
-  [key in StatusType]: string
-} = {
-  todo: 'TO DO',
-  inprogress: 'IN PROGRESS',
-  reviewing: 'REVIEWING',
-  completed: 'COMPLETED',
-  deleted: 'DELETED'
-}
-
 const EachColumn = ({ id, tasks, index, showHeader }: PropsType) => {
-  let backgroundColor = ''
-  if (id === 'todo') backgroundColor = 'bg-todo'
-  if (id === 'inprogress') backgroundColor = 'bg-inprogress'
-  if (id === 'reviewing') backgroundColor = 'bg-reviewing'
-  if (id === 'completed') backgroundColor = 'bg-completed'
-
   const title = (
-    <p className={`${backgroundColor} text-sm font-semibold px-2 py-1 rounded-md w-max`}>
-      {columnTitle[id]}
+    <p className={`${columnTitle[id].bgColor} text-sm font-semibold px-2 py-1 rounded-md w-max`}>
+      {columnTitle[id].title}
     </p>
   )
 
