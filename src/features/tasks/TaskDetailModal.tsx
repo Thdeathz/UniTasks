@@ -1,11 +1,12 @@
 import React from 'react'
-import { Modal, Tag, Tooltip } from 'antd'
+import { Modal, Tooltip } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { EditOutlined, TagOutlined } from '@ant-design/icons'
 import useCredentialStore from '~/stores/CredentialStore'
 import SubTask from '~/components/SubTask'
 import ChatBox from '~/components/ChatBox'
 import UserItem from '~/components/UserItem'
+import Tag from '~/components/Tag'
 
 type PropsType = {
   title: React.ReactNode
@@ -75,11 +76,9 @@ const TaskDetailModal = ({ title, showHeader, project, task, isOpen, setIsOpen }
       <div className="flex justify-between items-start h-[75vh] overflow-hidden">
         <div className="basis-2/3 pr-2 h-full">
           <div className="flex justify-between items-center w-full">
-            <div className="flex justify-start items-center">
+            <div className="flex justify-start items-center gap-2">
               {task.tags?.map((tag, index) => (
-                <Tag key={`tag-${index}`} color={tag.color}>
-                  {tag.name}
-                </Tag>
+                <Tag key={`tag-${index}`} type="custom" text={tag.name} color={tag.color} />
               ))}
 
               <Tooltip placement="bottom" title="New tag" arrow={false}>

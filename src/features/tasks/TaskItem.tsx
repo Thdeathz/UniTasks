@@ -15,7 +15,7 @@ import useCredentialStore from '~/stores/CredentialStore'
 import SubTask from '~/components/SubTask'
 import UserItem from '~/components/UserItem'
 import TaskDetailModal from './TaskDetailModal'
-import { Tag } from 'antd'
+import Tag from '~/components/Tag'
 
 type PropsType = {
   title: React.ReactNode
@@ -67,11 +67,9 @@ const TaskItem = ({ title, task, showHeader, disabled }: PropsType) => {
         )}
         <div className="flex flex-col justify-start items-start w-full p-2 gap-2">
           <div className="flex justify-between items-center w-full">
-            <div className="grow flex justify-start items-center w-full">
+            <div className="grow flex justify-start items-center gap-2 w-full">
               {task.tags?.slice(0, 2)?.map((tag, index) => (
-                <Tag key={`tag-${index}`} color={tag.color}>
-                  {tag.name}
-                </Tag>
+                <Tag key={`tag-${index}`} type="custom" text={tag.name} color={tag.color} />
               ))}
               <>
                 {task.tags.length > 2 && (

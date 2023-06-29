@@ -34,8 +34,8 @@ const Tag = ({ type, text, color, size, editable, onClick }: PropsType) => {
           type="button"
           className={
             size === 'large'
-              ? `bg-[${color}] font-medium py-0.5 px-2 rounded-md relative`
-              : `bg-[${color}] text-xs font-medium py-1 px-2 rounded-md relative`
+              ? `bg-[${color}] font-medium py-0.5 px-2 rounded relative`
+              : `bg-[${color}] text-xs font-medium py-1 px-2 rounded relative`
           }
           style={{
             color: contrast >= 128 ? '#000000' : '#ffffff',
@@ -47,7 +47,7 @@ const Tag = ({ type, text, color, size, editable, onClick }: PropsType) => {
           {editable && isHover && (
             <motion.button
               type="button"
-              className="absolute w-full h-full bg-noneSelected top-0 left-0 rounded-md flex justify-center items-center"
+              className="absolute w-full h-full bg-noneSelected top-0 left-0 rounded flex justify-center items-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
