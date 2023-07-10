@@ -1,13 +1,11 @@
 <p align="center">
-  <p>
-    <img width="50%" src="./src/assets/Logo.png" />
-  </p>
+  <img width="50%" src="./src/assets/Logo.png" />
+</p>
 
-  <p>
-    <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-18.2.0-blue.svg?style=flat-square" alt="react" title="React" /></a><!--
-    --><a href="https://ant.design/"><img src="https://img.shields.io/badge/Ant%20Design-5.5.2-blue.svg?style=flat-square" alt="Antd" title="antd" /></a><!--
-    --><a href="https://firebase.google.com/"><img src="https://img.shields.io/badge/Firebase-9.22.1-orange.svg?style=flat-square" alt="firebase" title="Firebase" /></a>
-  </p>
+<p align="center">
+  <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-18.2.0-blue.svg?style=flat-square" alt="react" title="React" /></a><!--
+  --><a href="https://ant.design/"><img src="https://img.shields.io/badge/Ant%20Design-5.5.2-blue.svg?style=flat-square" alt="Antd" title="antd" /></a><!--
+  --><a href="https://firebase.google.com/"><img src="https://img.shields.io/badge/Firebase-9.22.1-orange.svg?style=flat-square" alt="firebase" title="Firebase" /></a>
 </p>
 
 ## What is UniTasks ?
