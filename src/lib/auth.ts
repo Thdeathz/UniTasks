@@ -10,6 +10,8 @@ export const storeUserInfo = async (userInfo: UserCredential) => {
 export const getAllUsers = async () => {
   const users = await getDocument({ collectionName: 'users' })
 
+  console.log('==> all users', users)
+
   if (!users) return
 
   const usersMap = (users as UserCredential[]).reduce(

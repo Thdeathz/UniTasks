@@ -54,17 +54,19 @@ const useCredentialStore = create<ICredentialState>((set, get) => ({
   getAllUsers: async () => {
     const data = await getAllUsers()
 
+    console.log('==> all users', data)
+
     if (!data) return
 
     set({ users: data })
   },
 
   searchUser: searchValue => {
-    if (searchValue === '') return set({ searchUserResult: [] })
+    if (searchValue === '' || !searchValue) return set({ searchUserResult: [] })
 
-    const result = Array.from(get().users.values()).filter(user =>
-      user.email.toLowerCase().includes(searchValue.toLowerCase())
-    )
+    const result = Array.from(get().users.values()).filter(user => {
+      return user.email.toLowerCase().includes(searchValue.toLowerCase())
+    })
 
     set({ searchUserResult: result })
   },

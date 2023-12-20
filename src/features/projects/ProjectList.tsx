@@ -101,6 +101,7 @@ const ProjectList = () => {
   const navigate = useNavigate()
   const [filteredProject] = useProjectStore(state => [state.filteredProject])
   const [board] = useBoardStore(state => [state.board])
+  const [searchProjectValue] = useProjectStore(state => [state.searchProjectValue])
 
   return (
     <HomeLayout>
@@ -116,18 +117,23 @@ const ProjectList = () => {
         </button>
 
         <AnimatePresence initial={true}>
-          {Array.from(filteredProject.entries()).map(([id, project], index) => (
-            <ProjectItem
-              key={`project-list-${index}`}
-              project={project}
-              upcomingTask={
-                board.columns
-                  .get('todo')
-                  ?.tasks.filter(task => task.projectId === id)
-                  .splice(0, 3) as TaskType[]
-              }
-            />
-          ))}
+          {Array.from(filteredProject.entries())
+            .filter(([id, project]) => {
+              console.log('==> search', searchProjectValue)
+              return project.name.toLowerCase().includes(searchProjectValue.toLowerCase())
+            })
+            .map(([id, project], index) => (
+              <ProjectItem
+                key={`project-list-${index}`}
+                project={project}
+                upcomingTask={
+                  board.columns
+                    .get('todo')
+                    ?.tasks.filter(task => task.projectId === id)
+                    .splice(0, 3) as TaskType[]
+                }
+              />
+            ))}
         </AnimatePresence>
       </div>
     </HomeLayout>

@@ -34,8 +34,8 @@ export const db = getFirestore(app)
 export const storage = getStorage(app)
 
 // development environment only
-if (import.meta.env.VITE_NODE_ENV === 'development') {
-  connectFirestoreEmulator(db, 'localhost', 8080)
-  connectStorageEmulator(storage, 'localhost', 9199)
-  // connectAuthEmulator(auth, 'http://localhost:9099')
-}
+// if (import.meta.env.VITE_NODE_ENV === 'development') {
+//   connectFirestoreEmulator(db, 'localhost', 8080)
+//   connectStorageEmulator(storage, 'localhost', 9199)
+//   // connectAuthEmulator(auth, 'http://localhost:9099')
+// }

@@ -11,12 +11,20 @@ interface IProjectState {
   createProject: (project: ProjectType, inviteList: string[]) => void
   joinProject: (project: ProjectType, currentUserUid: string, notificationId: string) => void
   setFilterdProject: (projects: ProjectType[]) => void
+  searchProjectValue: string
+  setSearchProjectValue: (value: string) => void
 }
 
 const useProjectStore = create<IProjectState>((set, get) => ({
   projects: new Map<string, ProjectType>(),
 
   filteredProject: new Map<string, ProjectType>(),
+
+  searchProjectValue: '',
+
+  setSearchProjectValue: value => {
+    set({ searchProjectValue: value })
+  },
 
   getProjects: async currentUserUid => {
     const projects = await getAllProjects(currentUserUid)
